@@ -18,7 +18,7 @@ namespace ListaNegra.Models
         [Required]
         public string Description { get; set; }
         [Required]
-        public string FraudType { get; set; }
+        public string[] Tags { get; set; }
         [Required]
         public string[] Images { get; set; }
     }
