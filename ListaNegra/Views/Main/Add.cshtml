@@ -4,12 +4,6 @@
     ViewBag.Title = "Agregar un nuevo reporte";
 }
 
-<style>
-    .form-group label{
-        font-weight:bolder;
-    }
-</style>
-
 <div id="ManageAddController">
     <h2>@ViewBag.Title</h2>
 
@@ -28,105 +22,109 @@
     @using (Html.BeginForm("AddNewReport", "Main", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-
-<div class="row">
-    <div class="col-12 p-3">
-        <div class="form-group">
-            @Html.LabelFor(x => x.Title, "Titulo")
-            @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
-            @Html.ValidationMessageFor(x => x.Title)
-        </div>
-    </div>
-    <div class="col-12 p-3">
-        <div class="form-group">
-            @Html.LabelFor(x => x.ListName, "Nombre del defraudador")
-            @Html.TextBoxFor(x => x.ListName, new { @class = "form-control" })
-            @Html.ValidationMessageFor(x => x.ListName)
-        </div>
-    </div>
-    <div class="col-12 p-3">
-        <div class="form-group">
-            @Html.LabelFor(x => x.Description, "Pon una description de la fraude")
-            @Html.TextAreaFor(x => x.Description,25, 100, new { @class = "form-control" })
-            @Html.ValidationMessageFor(x => x.Description)
-        </div>
-    </div>
-
-    <div class="col-12 p-3">
-        Selecciona en el mapa el lugar del fraude o si no es relacionado a un punto especifico posicionalo en la ciudad del hecho.
-        <div class="input-group">
-
-            <div id="map"></div>
-        </div>
-    </div>
-    <input type="hidden" name="@Html.NameFor(x => x.Latitude)" v-model="Latitude" />
-    <input type="hidden" name="@Html.NameFor(x => x.Longitude)" v-model="Longitude" />
-
-    <div class="col-12 p-3">
-        <div class="form-group">
-            <label>Palabras clave</label>
-            <template>
-                <div class="tags">
-                    <vue-tag-input v-model="tag"
-                                   :tags="tags"
-                                   :autocomplete-items="filteredItems"
-                                   @@tags-changed="newTags => tags = newTags" />
+            <div class="row">
+                <div class="col-12 p-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.Title, "Titulo")<br />
+                        <small>Recomendamos un nombre que sea muy claro y consiso con el fraude perpetuado</small>
+                        @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Title)
+                    </div>
                 </div>
-            </template>
-        </div>
-    </div>
-    <div class="col-12 p-3">
-        <div class="form-group">
-            <label>Agregar Imagenes externas</label>
-            <small>Puedes agregar url a imagenes de tu caso</small>
-            <div class="input-group">
-                <input class="form-control"/>
-                <div class="input-group-append">
-                    <a class="btn btn-success text-light"><span class="material-icons font-size-unset">add_photo_alternate</span></a>
+                <div class="col-12 p-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.ListName, "Nombre del defraudador")<br />
+                        <small>Comparte el supuesto nombre del que te defraudo</small>
+                        @Html.TextBoxFor(x => x.ListName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.ListName)
+                    </div>
+                </div>
+                <div class="col-12 p-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.Phone, "Telefono utilizado en el fraude")<br />
+                        <small>Te contactaron de un telefono o te proporcionaron alguno con el que te defraudaron?</small>
+                        @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Phone)
+                    </div>
+                </div>
+                <div class="col-12 p-3">
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.Description, "Pon una description de la fraude")
+                        @Html.TextAreaFor(x => x.Description, 25, 100, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Description)
+                    </div>
+                </div>
+
+                <div class="col-12 p-3">
+                    Selecciona en el mapa el lugar del fraude o si no es relacionado a un punto especifico posicionalo en la ciudad del hecho.
+                    <div class="input-group">
+
+                        <div id="map"></div>
+                    </div>
+                </div>
+                <input type="hidden" name="@Html.NameFor(x => x.Latitude)" v-model="Latitude" />
+                <input type="hidden" name="@Html.NameFor(x => x.Longitude)" v-model="Longitude" />
+
+                <div class="col-12 p-3">
+                    <div class="form-group">
+                        <label>Palabras clave</label>
+                        <template>
+                            <div class="tags">
+                                <vue-tag-input v-model="tag"
+                                               :tags="tags"
+                                               :autocomplete-items="filteredItems"
+                                               @@tags-changed="newTags => tags = newTags" />
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="col-12 p-3">
+                    <div class="form-group">
+                        <label>Agregar Imagenes externas</label>
+                        <small>Puedes agregar url a imagenes de tu caso</small>
+                        <div class="input-group">
+                            <input class="form-control" v-model="InputImageAppend" v-on:click="appendImageToForm"/>
+                            <div class="input-group-append">
+                                <a class="btn btn-success"> <v-icon dark right>add_photo_alternate</v-icon></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 p-3">
+                    <div class="col-md-3 col-lg-2 col-xl-1 offset-xl-11 offset-lg-10 offset-md-9">
+                        @*<a class="btn btn-primary">Crear</a>*@
+                        <v-btn small color="primary" large block class="float-right">Crear</v-btn>
+                    </div>
                 </div>
             </div>
-        </div>
+            }
     </div>
-    <div class="col-12 p-3">
-        <div class="col-md-3 col-lg-2 col-xl-1">
-            <a class="btn btn-primary">Crear</a>
-        </div>
-    </div>
-</div>
-    }
-</div>
-
-<style>
- 
-    .vue-tags-input {
-        max-width: none !important;
-        width: 100%;
-    }
-</style>
-
 
 
 <script>
     require(['vue', 'openlayers', 'tag-input-vue', 'vuetify'], (Vue, ol, vuetag, Vuetify) => {
-
+        console.log(Vuetify);
         var $app = new Vue({
             el: '#ManageAddController',
-            vuetify : new Vuetify(),
+            vuetify: new Vuetify(),
             components: {
-                'vue-tag-input' : vuetag.default
+                'vue-tag-input': vuetag.default
             },
             data: {
-                map : null,
-                source : null,
-                layer : null,
-                marker : null,
+                map: null,
+                source: null,
+                layer: null,
+                marker: null,
                 OL_Proj: ol.proj,
-                tag:  '',
+                tag: '',
                 tags: [],
+                latitude : '',
+                longitude : '',
                 filteredItems: [{ text: 'Spain' }],
+                InputImageAppend : ''
             },
             methods: {
-                initMap: function() {
+                initMap: function () {
 
                     this.map = new ol.Map({
                         target: 'map',
@@ -164,8 +162,16 @@
                             geometry: new ol.geom.Point(e.coordinate) // dont worry about coordinate type 0,0 will be in west coast of africa
                         });
 
+                        console.log(newProj);
+                        this.latitude = newProj.lat;
+                        this.longitude = newProj.lon;
+
                         this.source.addFeature($app.marker);
                     }); // click event map
+
+                },
+                appendImageToForm: function () {
+                    var url = this.InputImageAppend;
 
                 }
             },
@@ -174,38 +180,6 @@
             }
 
         });
-
-        // components
-
-        //export default {
-        //  components: {
-        //    vuetag,
-        //  },
-        //  data() {
-        //    return {
-        //      tag: '',
-        //      tags: [],
-        //      autocompleteItems: [{
-        //        text: 'Spain',
-        //      }, {
-        //        text: 'France',
-        //      }, {
-        //        text: 'USA',
-        //      }, {
-        //        text: 'Germany',
-        //      }, {
-        //        text: 'China',
-        //      }],
-        //    };
-        //  },
-        //  computed: {
-        //    filteredItems() {
-        //      return this.autocompleteItems.filter(i => {
-        //        return i.text.toLowerCase().indexOf(this.tag.toLowerCase()) !== -1;
-        //      });
-        //    },
-        //  },
-        //};
     });
 </script>
 
@@ -213,5 +187,5 @@
 @*important*@
 
 @*var currentPoint = new Point(routeCoords[index]);
-var feature = new Feature(currentPoint);
-vectorContext.drawFeature(feature, styles.geoMarker);*@
+    var feature = new Feature(currentPoint);
+    vectorContext.drawFeature(feature, styles.geoMarker);*@

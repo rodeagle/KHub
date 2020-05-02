@@ -24,24 +24,72 @@
 </head>
 @Html.Partial("~/Views/Shared/_Header.cshtml")
 <body>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <div class="footer-container-ads text-center">
-            ADDS GO HERE
-        </div>
-        <footer>
-            <hr />
-            <div class="row">
-                <div class="col-6 border-right-2-white text-center">
-                    <p><a href="">Contactanos</a></p>
+    <div id="MainApp">
+        <v-app>
+            <div class="container body-content">
+                @RenderBody()
+                <hr />
+                <div class="footer-container-ads text-center">
+                    ADDS GO HERE
                 </div>
-                <div class="col-6 text-center">
-                    <p>&copy; @DateTime.Now.Year - La Lista Negra</p>
-                </div>
+                <footer>
+                    <hr />
+                    <div class="row">
+                        <div class="col-6 border-right-2-white text-center">
+                            <p><a href="">Contactanos</a></p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <p>&copy; @DateTime.Now.Year - La Lista Negra</p>
+                        </div>
 
+                    </div>
+                </footer>
             </div>
-        </footer>
+        </v-app>
     </div>
 </body>
 </html>
+
+
+@*Main App Handler*@
+
+<script>
+    require(['vue', 'vuetify', 'input-mask'], (Vue, Vuetify, VueMask) => {
+
+        //   add the vue plugin on start up         
+        Vue.use(Vuetify);
+        Vue.use(VueMask);
+
+        Vue.component('input-image-hidden', {
+            data: function () {
+                return {}
+            },
+            props: ['url'],
+            template: '<input type="hidden" value="{{url}}" />'
+        });
+
+        var $MainApp = new Vue({
+            vuetify: new Vuetify()
+        });
+
+        $MainApp.$mount('#MainApp');
+
+    });
+</script>
+
+
+
+<style>
+
+    .vue-tags-input {
+        max-width: none !important;
+        width: 100%;
+    }
+</style>
+
+
+<style>
+    .form-group label {
+        font-weight: bolder;
+    }
+</style>

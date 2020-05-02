@@ -21,5 +21,7 @@ namespace ListaNegra.Models
         public string[] Tags { get; set; }
         [Required]
         public string[] Images { get; set; }
+
+        public string Phone { get; set; }
     }
 }
