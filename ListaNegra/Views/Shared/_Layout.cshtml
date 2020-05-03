@@ -18,7 +18,6 @@
     @*SCRIPTS*@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/requirejs")
-    @RenderSection("scripts", required: false)
     @*sCRIPTS*@
 
 </head>
@@ -26,6 +25,7 @@
 <body>
     <div id="MainApp">
         <v-app>
+            <div class="hover" v-bind:class="{'disabled': isMounted }"></div>
             <div class="container body-content">
                 @RenderBody()
                 <hr />
@@ -50,34 +50,9 @@
 </body>
 </html>
 
-
-@*Main App Handler*@
-
 <script>
-    require(['vue', 'vuetify', 'input-mask'], (Vue, Vuetify, VueMask) => {
-
-        //   add the vue plugin on start up         
-        Vue.use(Vuetify);
-        Vue.use(VueMask);
-
-        Vue.component('input-image-hidden', {
-            data: function () {
-                return {}
-            },
-            props: ['url'],
-            template: '<input type="hidden" value="{{url}}" />'
-        });
-
-        var $MainApp = new Vue({
-            vuetify: new Vuetify()
-        });
-
-        $MainApp.$mount('#MainApp');
-
-    });
+    require(['jquery', 'bootstrap']);
 </script>
-
-
 
 <style>
 
@@ -85,11 +60,24 @@
         max-width: none !important;
         width: 100%;
     }
-</style>
-
-
-<style>
     .form-group label {
         font-weight: bolder;
+    }
+    .hover {
+        background-color:white;
+        z-index:100;
+        width:100%;
+        height:100%;
+        position:fixed;
+        opacity:1;
+        top:0;
+        left:0;
+        transition: opacity 2s;
+    }
+
+    .hover.disabled{
+        /*transition: opacity 2s;*/
+        opacity:0;
+        pointer-events: none;
     }
 </style>
