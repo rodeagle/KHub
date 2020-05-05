@@ -1,31 +1,17 @@
-﻿define(['vue', 'vuetify', 'input-mask','jquery'], function (Vue, Vuetify, VueMask, $) {
+﻿define(['vue', 'vuetify', 'input-mask', 'jquery','notifications', 'vueLoader!components/InputImageHidden.vue'],
+    function (Vue, Vuetify, VueMask, $, notifications) {
     //add the vue plugin on start up
     Vue.use(Vuetify);
-    Vue.use(VueMask);
+    Vue.use(VueMask.default);
+    Vue.use(notifications.default);
+    console.log("Vuetify Directive loaded:", Vuetify);
+    console.log("VueMask Directive loaded:", VueMask);
+    console.log("notifications Directive loaded:", notifications);
 
-    Vue.component('input-image-hidden', {
-        props: {
-            url: Array
-        },
-        template: `<div>
-                        <small>Imagenes agregadas</small>
-                        <div v-for="item in url" class="input-group">
-                            <input type="textbox" class="form-control" :value="item"/><v-icon class="append-addon clickable">add</v-icon>
-                        </div>
-                    </div>`,
-        methods: {
-            remove: function () {
-                delete this.url;
-            }
-        }
-    });
+    //Vue Components preloaded with requirejs
 
     var app = {
-        vuetify: new Vuetify()
-        //components: {
-        //    'manage-add-controller': 'manage-add-controller'
-        //}
-
+        vuetify: new Vuetify(),
     };
 
     return {
@@ -36,13 +22,13 @@
             } else {
                 app.data = { isMounted : false };
             }
+
             let $app = new Vue(app).$mount('#MainApp');
-            console.log(1);
-            $app.$data.isMounted = true;
-            window.addEventListener('hashchange', function () {
-                alert('test');
-                $app.$data.isMounted = false;
-            }, false);
+
+            setTimeout(() => {
+                $app.$data.isMounted = true;
+
+            }, 100);
         }
     };
 });

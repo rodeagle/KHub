@@ -80,7 +80,7 @@
                 <label>Agregar Imagenes externas</label>
                 <small>Puedes agregar url a imagenes de tu caso</small>
                 <div class="input-group">
-                    <input type="url" pattern="https://.*" class="form-control" v-model="InputImageAppend" v-on:keyup.enter="appendImageToForm" />
+                    <input type="url" pattern="https://.*" placeholder="http://ejemplo.com/img/imagen_relacionada_1000.png" class="form-control" v-model="InputImageAppend" v-on:keyup.enter="appendImageToForm" />
                     <div class="input-group-append" @@click="appendImageToForm">
                         <a class="btn btn-success"> <v-icon dark right>add_photo_alternate</v-icon></a>
                     </div>
@@ -104,7 +104,7 @@
 
 
 <script>
-    require(['openlayers', 'app', 'tag-input-vue'], (ol, app, vuetag) => {
+    require(['openlayers', 'app', 'tag-input-vue', 'vue'], (ol, app, vuetag, Vue) => {
 
         let controller = {
             components: {
@@ -156,7 +156,7 @@
 
                         let newProj = this.OL_Proj.toLonLat(e.coordinate);
                         console.log(newProj);
-                        this.marker && this.$data.source.removeFeature(this.marker);
+                        this.marker && this.source.removeFeature(this.marker);
 
                         this.marker = new ol.Feature({
                             geometry: new ol.geom.Point(e.coordinate) // dont worry about coordinate type 0,0 will be in west coast of africa
@@ -171,6 +171,9 @@
 
                 },
                 appendImageToForm: function () {
+                    //if()
+                    console.log(this.$notify);
+                    this.$notify('text');
                     var url = this.InputImageAppend;
                     this.Images.push(url);
                 }

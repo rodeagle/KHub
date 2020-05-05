@@ -45,13 +45,14 @@
                     </div>
                 </footer>
             </div>
+            <notifications />
         </v-app>
     </div>
 </body>
 </html>
 
 <script>
-    require(['jquery', 'bootstrap']);
+    require(['jquery', 'bootstrap', 'vue','vueLoader']);
 </script>
 
 <style>
@@ -76,8 +77,12 @@
     }
 
     .hover.disabled{
-        /*transition: opacity 2s;*/
+        transition: opacity 2s;
         opacity:0;
         pointer-events: none;
+    }
+
+    .clickable{
+        cursor:pointer;
     }
 </style>

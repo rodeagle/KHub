@@ -79,36 +79,3 @@
     </div>
     <hr />
 </header>
-
-
-@section script{
-
-    <script>
-    require(['vue', 'vuetify', 'input-mask'], (Vue, Vuetify, VueMask) => {
-
-        //   add the vue plugin on start up
-        Vue.use(Vuetify);
-        Vue.use(VueMask);
-
-        Vue.component('input-image-hidden', {
-            data: function () {
-                return {
-                }
-            },
-            props: ['url'],
-            template: '<input type="textbox" class="form-control" value="{{url}}"/><v-icon></v-icon>',
-            methods: {
-                remove: function () {
-                    delete this.url;
-                }
-            }
-        });
-
-        var $MainApp = new Vue({
-            vuetify: new Vuetify()
-        });
-        $MainApp.$mount('#MainApp');
-        console.log(1);
-    });
-    </script>
-}
