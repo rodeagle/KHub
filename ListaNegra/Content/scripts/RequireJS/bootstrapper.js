@@ -10,7 +10,9 @@
         'input-mask': 'https://cdn.jsdelivr.net/npm/vue-the-mask@0.11.1/dist/vue-the-mask.min',
         'app': 'scripts/main/app',
         'vueLoader': 'https://rawgit.com/vikseriq/requirejs-vue/master/requirejs-vue',
-        'notifications': 'https://unpkg.com/vue-notification@1.3.20/dist/index'
+        'notifications': 'https://unpkg.com/vue-notification@1.3.20/dist/index',
+        'jquery-validate': 'https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min',
+        'jquery-validate-unobtrusive': 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min'
     },
     shim: {
         "vue": { "exports": "Vue" },
@@ -34,6 +36,12 @@
         'notifications': {
             deps: ['vue'],
             exports: 'Notifications'
+        },
+        'jquery-validate': {
+            deps : ['jquery']
+        },
+        'jquery-validate-unobtrusive': {
+            deps: ['jquery', 'jquery-validate']
         }
     }
 });

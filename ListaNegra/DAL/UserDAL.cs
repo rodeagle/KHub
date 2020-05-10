@@ -83,16 +83,52 @@ namespace ListaNegra.DAL
 
                     return Task.Run(async () => {
 
-                        var post = await (
-                            from p in context.Posts
-                            join pt in context.PostTags
-                            on p.PostID equals pt.PostID
-                            join ei in context.ExternalImages
-                            on p.PostID equals ei.PostID
-                            select p
-                        ).FirstAsync();
+                        return await context.Posts.FirstAsync(x => x.PostID == postId);
 
-                        return post;
+                    });
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public Task<List<ExternalImages>> GetPostImages(int postId)
+        {
+            try
+            {
+                using (var context = _userRepo)
+                {
+
+                    return Task.Run(async () => {
+
+                        return await context.ExternalImages.Where(x => x.PostID == postId).ToListAsync();
+
+                    });
+
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public Task<List<PostTags>> GetPostTags(int postId)
+        {
+            try
+            {
+                using (var context = _userRepo)
+                {
+
+                    return Task.Run(async () => {
+
+                        return await context.PostTags.Where(x => x.PostID == postId).ToListAsync();
 
                     });
                 }

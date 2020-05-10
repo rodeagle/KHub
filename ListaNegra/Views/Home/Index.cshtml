@@ -18,9 +18,9 @@ Los casos mas recientes...
             </div>
             @if (ApplicationUserManager.IsSignedIn)
             {
-                <div class="col-6">
-                    <a href="@Url.Action("Add","Main")" class="btn btn-primary float-right">Agregar <span class="material-icons font-size-unset">add</span></a>
-                </div>
+        <div class="col-6">
+            <v-btn color="primary" href="@Url.Action("Add","Main")" large class="float-right">Agregar<v-icon>add</v-icon></v-btn>
+        </div>
             }
         </div>
         @*list of items*@

@@ -17,6 +17,7 @@
 
     @*SCRIPTS*@
     @Scripts.Render("~/bundles/modernizr")
+    @*@Scripts.Render("~/bundles/jqueryval")*@
     @Scripts.Render("~/bundles/requirejs")
     @*sCRIPTS*@
 
@@ -51,8 +52,29 @@
 </body>
 </html>
 
+@RenderSection("scripts", false)
+
 <script>
-    require(['jquery', 'bootstrap', 'vue','vueLoader']);
+    require(['jquery', 'bootstrap', 'vue', 'vueLoader'], function () {
+        alert('test');
+        $.fn.serializeObject = function() {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+
+    });
 </script>
 
 <style>
@@ -84,5 +106,10 @@
 
     .clickable{
         cursor:pointer;
+    }
+
+    .input-validation-error{
+        background-color:#ffcfdf;
+        border-color:red;
     }
 </style>

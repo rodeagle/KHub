@@ -48,7 +48,7 @@ namespace ListaNegra.Controllers
         [HttpGet]
         public async Task<ActionResult> Post(int postId) {
 
-            var post = _userBL.GetPost(postId);
+            var post = await _userBL.GetPost(postId);
 
             return View(post);
         }
