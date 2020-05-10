@@ -280,6 +280,12 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="BL\IUserBL.cs" />
+    <Compile Include="BL\UserBL.cs" />
+    <Compile Include="DALModels\PostTags.cs" />
+    <Compile Include="DALModels\ExternalImages.cs" />
+    <Compile Include="DALModels\Posts.cs" />
+    <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Repository\AppDbContext.cs" />
     <Compile Include="DALModels\AspNetUser.cs" />
     <Compile Include="DAL\IUserDAL.cs" />
@@ -387,6 +393,7 @@
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
     <Content Include="Views\Main\Add.cshtml" />
+    <Content Include="Views\Main\Post.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

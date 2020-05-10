@@ -69,9 +69,9 @@
                 <label>Palabras clave</label>
                 <div class="tags">
                     <vue-tag-input v-model="tag"
-                                    :tags="tags"
-                                    :autocomplete-items="filteredItems"
-                                    @@tags-changed="newTags => tags = newTags" />
+                                   :tags="tags"
+                                   :autocomplete-items="filteredItems"
+                                   @@tags-changed="newTags => tags = newTags" />
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
                         <a class="btn btn-success"> <v-icon dark right>add_photo_alternate</v-icon></a>
                     </div>
                 </div>
-                
+
             </div>
         </div>
         <div class="col-12 p-3">
@@ -171,9 +171,24 @@
 
                 },
                 appendImageToForm: function () {
-                    //if()
+                    if (!(!!this.InputImageAppend)) {
+                        this.$notify({
+                            title: 'Hubo un error',
+                            text: 'Debes de introducir un hipervinculo al formulario y presionar enter/presionar el botton de agregar',
+                            type: 'error',
+                        });
+                        return;
+                    }
+                    if (!(!!this.InputImageAppend.match(/(https?:[^\s]+(.jpg|.png|.jpeg))/g))) {
+                        this.$notify({
+                            title: 'Hubo un error',
+                            text: 'Solo se aceptan imagenes con terminacion .jpg / .jpeg / .png',
+                            type: 'error',
+                        });
+                        return;
+                    }
                     console.log(this.$notify);
-                    this.$notify('text');
+
                     var url = this.InputImageAppend;
                     this.Images.push(url);
                 }

@@ -26,8 +26,10 @@ namespace ListaNegra.Repository
         }
 
         public DbContext DbContext { get { return this; } }
-
         public DbSet<AspNetUser> AspNetUser { get; set; }
+        public DbSet<Posts> Posts { get; set; }
+        public DbSet<ExternalImages> ExternalImages { get; set; }
+        public DbSet<PostTags> PostTags { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

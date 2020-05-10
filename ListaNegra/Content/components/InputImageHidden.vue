@@ -1,10 +1,10 @@
 ﻿<template>
     <div v-show="url.length > 0">
         <small>Imagenes agregadas</small>
-        <div v-for="(item,index) in url" class="input-group">
+        <div v-for="(item,index) in url" class="input-group input-group-sm">
             <input type="text" class="form-control form-readonly" :value="item" readonly/>
-            <v-btn fab class="secondary" x-small  color="error"  v-on:click="remove(index)">
-                <v-icon>remove_circle_outline</v-icon>
+            <v-btn tile class="secondary" x-small  color="error"  v-on:click="remove(index)">
+                <v-icon>remove</v-icon>
             </v-btn>
         </div>
     </div>

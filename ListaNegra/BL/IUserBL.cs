@@ -1,5 +1,4 @@
-﻿using ListaNegra.DALModels;
-using ListaNegra.Models;
+﻿using ListaNegra.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,15 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace ListaNegra.DAL
+namespace ListaNegra.BL
 {
-    public interface IUserDAL
+    public interface IUserBL
     {
-        int GetUser();
-        int UserName();
-
         Task<bool> CreatePost(Guid userId, ListItemModel model);
+        Task<PostModel> GetPost(int postId);
 
-        Task<Posts> GetPost(int postId); 
     }
 }
