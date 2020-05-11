@@ -3,23 +3,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ListaNegra.Models
 {
-    public class ListItemModel
+    public class PostModel
     {
-        [Required]
+        public int PostID { get; set; }
         public string Title { get; set; }
 
-        // name of the cheat 
-        [Required]
         public string ListName { get; set; }
-        [Required]
-        public int Latitude { get; set; }
-        [Required]
-        public int Longitude { get; set; }
-        [Required]
+
+        public decimal Latitude { get; set; }
+
+        public decimal Longitude { get; set; }
+
         public string Description { get; set; }
-        [Required]
+
         public string[] Tags { get; set; }
-        [Required]
+
         public string[] Images { get; set; }
 
         public string Phone { get; set; }

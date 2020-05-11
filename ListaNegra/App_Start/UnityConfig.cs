@@ -4,6 +4,8 @@ using ListaNegra.Repository;
 using Unity;
 using Unity.Injection;
 using ListaNegra.Controllers;
+using ListaNegra.BL;
+using AutoMapper;
 
 namespace ListaNegra
 {
@@ -48,6 +50,10 @@ namespace ListaNegra
             container.RegisterType<AccountController>(new InjectionConstructor());
             container.RegisterType<IRepositoryContext, AppDbContext>();
             container.RegisterType<IUserDAL, UserDAL>();
+            container.RegisterType<IUserBL, UserBL>();
+
+
+            // automapper
 
         }
     }

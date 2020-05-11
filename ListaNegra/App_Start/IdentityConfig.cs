@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using ListaNegra.Models;
+using System.Web.Security;
 
 namespace ListaNegra
 {
@@ -41,7 +42,7 @@ namespace ListaNegra
         }
 
         public static bool IsSignedIn =>  HttpContext.Current != null && HttpContext.Current.Request.IsAuthenticated;
-
+        public static Guid UserID => IsSignedIn ? Guid.Parse(HttpContext.Current.User.Identity.GetUserId()) : Guid.Empty;
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));

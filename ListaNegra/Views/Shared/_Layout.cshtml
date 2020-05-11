@@ -4,86 +4,112 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Inicio</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-    @* new scripts and style sheets *@
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    @*Style sheets*@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    @*<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>*@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css" type="text/css">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
-    <style>
-        .map {
-            height: 400px;
-            width: 100%;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
-    @RenderSection("scripts", required: false)
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="@("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css")" rel="stylesheet">
+    <link href='@("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css")' rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    @*END STYLE SHEETS*@
+
+    @*SCRIPTS*@
+    @Scripts.Render("~/bundles/modernizr")
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+    @Scripts.Render("~/bundles/requirejs")
+    @*sCRIPTS*@
 
 </head>
 @Html.Partial("~/Views/Shared/_Header.cshtml")
 <body>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <div class="footer-container-ads text-center">
-            ADDS GO HERE
-        </div>
-        <footer>
-            <hr />
-            <div class="row">
-                <div class="col-6 border-right-2-white text-center">
-                    <p><a href="">Contactanos</a></p>
+    <div id="MainApp">
+        <v-app>
+            <div class="hover" v-bind:class="{'disabled': isMounted }"></div>
+            <div class="container body-content">
+                @RenderBody()
+                <hr />
+                <div class="footer-container-ads text-center">
+                    ADDS GO HERE
                 </div>
-                <div class="col-6 text-center">
-                    <p>&copy; @DateTime.Now.Year - La Lista Negra</p>
-                </div>
+                <footer>
+                    <hr />
+                    <div class="row">
+                        <div class="col-6 border-right-2-white text-center">
+                            <p><a href="">Contactanos</a></p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <p>&copy; @DateTime.Now.Year - La Lista Negra</p>
+                        </div>
 
+                    </div>
+                </footer>
             </div>
-        </footer>
+            <notifications position="bottom right" />
+        </v-app>
     </div>
 </body>
 </html>
 
+@RenderSection("scripts", false)
+
+<script>
+    require(['jquery', 'bootstrap', 'vue', 'vueLoader'], function () {
+        alert('test');
+        $.fn.serializeObject = function() {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+
+    });
+</script>
+
 <style>
-    .border-right-2-white{
-        border-right:2px solid white;
+
+    .vue-tags-input {
+        max-width: none !important;
+        width: 100%;
+    }
+    .form-group label {
+        font-weight: bolder;
+    }
+    .hover {
+        background-color:white;
+        z-index:100;
+        width:100%;
+        height:100%;
+        position:fixed;
+        opacity:1;
+        top:0;
+        left:0;
+        transition: opacity 2s;
     }
 
-    footer{
-        background-color:#1D2124;
-        color:white;
-        font-weight:bolder;
-        height:300px;
+    .hover.disabled{
+        transition: opacity 2s;
+        opacity:0;
+        pointer-events: none;
     }
 
-        footer a {
-            color:white;
-        }
-
-        footer a:hover{
-            color:lightgray;
-        }
-
-        .page-title{
-            font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-            font-style:italic;
-        }
-
-    #map {
-        height: 400px; /* The height is 400 pixels */
-        width: 100%; /* The width is the width of the web page */
+    .clickable{
+        cursor:pointer;
     }
 
-    .font-size-unset{
-        font-size:unset !important;
-    }
-
-    .item-container{
-        height: 500px;
+    .input-validation-error{
+        background-color:#ffcfdf;
+        border-color:red;
     }
 </style>
