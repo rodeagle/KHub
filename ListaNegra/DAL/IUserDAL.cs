@@ -11,13 +11,23 @@ namespace ListaNegra.DAL
 {
     public interface IUserDAL
     {
-        int GetUser();
-        int UserName();
+        //int GetUser();
+        //int UserName();
 
-        Task<bool> CreatePost(Guid userId, ListItemModel model);
+        //Task<bool> CreatePost(Guid userId, ListItemModel model);
 
-        Task<Posts> GetPost(int postId); 
-        Task<List<PostTags>> GetPostTags(int postId); 
-        Task<List<ExternalImages>> GetPostImages(int postId); 
+        //Task<Posts> GetPost(int postId); 
+        //Task<List<PostTags>> GetPostTags(int postId); 
+        //Task<List<ExternalImages>> GetPostImages(int postId); 
+
+        // validated methods
+
+        Task<bool> UpdateUsers(UserBin users);
+        Task<UserBin> GetUsers();
+        Task<bool> UpdateProjects(ProjectBin projects);
+        Task<string> AddNewPostDetail(PostDetail detail, string name);
+        Task<bool> UpdatePosts(PostsBin posts);
+        Task<ProjectBin> GetProjects();
+        Task<PostsBin> GetPosts();
     }
 }

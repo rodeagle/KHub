@@ -12,7 +12,10 @@
         'vueLoader': 'https://rawgit.com/vikseriq/requirejs-vue/master/requirejs-vue',
         'notifications': 'https://unpkg.com/vue-notification@1.3.20/dist/index',
         'jquery-validate': 'https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min',
-        'jquery-validate-unobtrusive': 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min'
+        'jquery-validate-unobtrusive': 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min',
+        'vue-modal': 'https://cdn.jsdelivr.net/npm/vue-js-modal@1.3.28/dist/index.min',
+        'axios': 'https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min',
+        'CreatePostModal' : 'components/CreatePostModal.vue'
     },
     shim: {
         "vue": { "exports": "Vue" },

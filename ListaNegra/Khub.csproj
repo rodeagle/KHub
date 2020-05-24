@@ -124,6 +124,9 @@
     <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Reflection.Core.1.1.1\lib\net45\Mono.Reflection.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp, Version=106.11.3.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.11.3\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
@@ -152,6 +155,7 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -321,31 +325,36 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap-theme.css" />
-    <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="App\src\plugins\vuemixin.js" />
+    <Content Include="App\src\plugins\appstart.js" />
+    <Content Include="App\src\app.js" />
+    <Content Include="App\src\plugins\vuetify.js" />
+    <Content Include="App\webpack.config.js" />
+    <Content Include="Content\scripts\app.js" />
     <Content Include="Content\scripts\main\app.js" />
-    <Content Include="Content\styles\SiteStyleSheet.css">
+    <Content Include="Content\scripts\main\plugintest.js" />
+    <Content Include="App\src\styles\SiteStyleSheet.css">
       <DependentUpon>SiteStyleSheet.scss</DependentUpon>
     </Content>
-    <Content Include="Content\styles\SiteStyleSheet.min.css">
+    <Content Include="App\src\styles\SiteStyleSheet.min.css">
       <DependentUpon>SiteStyleSheet.css</DependentUpon>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Content\scripts\bootstrap.js" />
-    <Content Include="Content\scripts\bootstrap.min.js" />
     <Content Include="DB_ListaNegraDataSet.xsc">
       <DependentUpon>DB_ListaNegraDataSet.xsd</DependentUpon>
     </Content>
-    <Content Include="Content\styles\SiteStyleSheet.scss" />
-    <Content Include="Content\styles\utilities\_Utilities.scss" />
-    <Content Include="Content\styles\views\_Home.scss" />
-    <Content Include="Content\styles\utilities\_GlobalModifiers.scss" />
-    <None Include="Content\components\InputImageHidden.vue" />
+    <Content Include="App\src\styles\SiteStyleSheet.scss" />
+    <Content Include="App\src\styles\utilities\_Utilities.scss" />
+    <Content Include="App\src\styles\utilities\_GlobalModifiers.scss" />
+    <Content Include="App\package-lock.json" />
+    <Content Include="App\package.json" />
+    <Content Include="App\src\components\CreatePostModal.vue" />
+    <Content Include="App\src\components\Header.vue" />
+    <Content Include="App\src\components\InputImageHidden.vue" />
+    <Content Include="App\src\components\CodeEditor.vue" />
     <None Include="compilerconfig.json" />
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
@@ -358,17 +367,6 @@
     <Content Include="DB_ListaNegraDataSet.xss">
       <DependentUpon>DB_ListaNegraDataSet.xsd</DependentUpon>
     </Content>
-    <None Include="Content\scripts\jquery-3.4.1.intellisense.js" />
-    <Content Include="Content\scripts\jquery-3.4.1.js" />
-    <Content Include="Content\scripts\jquery-3.4.1.min.js" />
-    <Content Include="Content\scripts\jquery-3.4.1.slim.js" />
-    <Content Include="Content\scripts\jquery-3.4.1.slim.min.js" />
-    <None Include="Content\scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Content\scripts\jquery.validate.js" />
-    <Content Include="Content\scripts\jquery.validate.min.js" />
-    <Content Include="Content\scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Content\scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Content\scripts\modernizr-2.8.3.js" />
     <Content Include="Content\scripts\RequireJS\bootstrapper.js" />
     <Content Include="Content\scripts\RequireJS\require.js" />
     <Content Include="Web.config" />
@@ -411,20 +409,16 @@
     <Content Include="Views\Main\Post.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App\dist\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Content\styles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="packages.config" />
-    <Content Include="Content\scripts\jquery-3.4.1.slim.min.map" />
-    <Content Include="Content\scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

@@ -1,54 +1,30 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "K hub";
 }
 
-Los casos mas recientes...
-<div class="jumbotron">
-    <div id="map"></div>
-</div>
+<div><code-editor></code-editor></div>
 
-<div class="row">
-    <div class="col-md-3">
+@section scripts {
 
-    </div>
-    <div class="col-md-9">
-        <div class="row">
-            <div class="col-6">
-                <h3>Mas Recientes :  </h3>
-            </div>
-            @if (ApplicationUserManager.IsSignedIn)
-            {
-        <div class="col-6">
-            <v-btn color="primary" href="@Url.Action("Add","Main")" large class="float-right">Agregar<v-icon>add</v-icon></v-btn>
-        </div>
+    <script>
+        //start main app
+        let controller = {
+            components: {
+                'code-editor': window.VueApp.Components.CodeEditor
+            },
+            data: {},
+            methods: {
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
             }
-        </div>
-        @*list of items*@
-        <div class="item-container">
-            <div class="row">
-                <div>
-                    <img />
-                    <div>Title</div>
-                    <div>Comments</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        };
+        console.log('calling vue app');
+        console.log(VueApp);
+        VueApp.Start(controller);
+    </script>
 
-<script>
-    require(['app'], function (app) {
-
-        $(() => {
-
-            $('#Search').click(() => {
-                $('#SearchBar').slideToggle();
-            });
-
-        });
-
-        app.Start({});
-
-    });
-
-</script>
+}

@@ -99,9 +99,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ListaNegra\ListaNegra.csproj">
+    <ProjectReference Include="..\ListaNegra\Khub.csproj">
       <Project>{407B6207-485A-46BA-AA22-BFC3DE5DD81E}</Project>
-      <Name>ListaNegra</Name>
+      <Name>Khub</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

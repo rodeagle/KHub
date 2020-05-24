@@ -12,6 +12,8 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using ListaNegra.Models;
 using System.Web.Security;
+using ListaNegra.DAL;
+using System.Runtime.Caching;
 
 namespace ListaNegra
 {
@@ -41,8 +43,24 @@ namespace ListaNegra
         {
         }
 
-        public static bool IsSignedIn =>  HttpContext.Current != null && HttpContext.Current.Request.IsAuthenticated;
-        public static Guid UserID => IsSignedIn ? Guid.Parse(HttpContext.Current.User.Identity.GetUserId()) : Guid.Empty;
+        public static bool IsSignedIn =>  HttpContext.Current != null && 
+            HttpContext.Current.Request.Cookies["Credential"] != null &&
+            MemoryCache.Default.Get(HttpContext.Current.Request.Cookies["Credential"].Value) != null;
+        public static User User {
+            get {
+                if (!IsSignedIn)
+                    return null;
+                var cookie = HttpContext.Current.Request.Cookies["Credential"].Value;
+
+                var user = (User)MemoryCache.Default.Get(cookie);
+
+                if (user == null) {
+                    HttpContext.Current.Response.Cookies.Remove(cookie);
+                }
+
+                return user;
+            }
+        } 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
