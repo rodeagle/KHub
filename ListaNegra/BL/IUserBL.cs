@@ -18,9 +18,11 @@ namespace ListaNegra.BL
 
         Task<bool> CreateProject(string name, bool isPublic);
 
-        Task<bool> CreatePost(string title, int projectid, string[] tags, string data);
+        Task<bool> CreatePost(string title, int projectid, string[] tags, string description, string data);
 
         Task<User> ValidateUser(string alias, string pass);
+
+        Task<IEnumerable<Project>> GetUserProjects(int userid);
 
     }
 }

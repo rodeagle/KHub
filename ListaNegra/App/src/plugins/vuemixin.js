@@ -52,6 +52,29 @@ export default function Init() {
                             reject(error.message);
                         });
                 });
+            },
+            CreatePost: function (data) {
+
+                console.log('Vuemixn : CreatePost');
+                console.log(data);
+
+                var model = {
+                    title: data.title,
+                    description: data.description,
+                    tags: data.tags,
+                    projectid: data.selected,
+                    code: data.code
+                };
+                return new Promise((resolve, reject) => {
+                    axios.post('/Home/CreatePost', model)
+                        .then(function (response) {
+                            response.data.success && resolve(response.data);
+                            !response.data.success && reject(response.data.message);
+                        })
+                        .catch(function (error) {
+                            reject(error.message);
+                        });
+                });
             }
         }
     });

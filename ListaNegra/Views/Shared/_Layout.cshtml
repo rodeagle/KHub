@@ -10,7 +10,8 @@
     <link href='@("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css")' rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism.css" />
+    <link rel="stylesheet" href="https://unpkg.com/vue-prism-editor/dist/VuePrismEditor.css">
+    <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism-tomorrow.css" />
     @*<script src="~/App/dist/home_index_bundle.js"></script>*@
     @*<script src="~/App/dist/vendors_bundle.js"></script>*@
     @*END STYLE SHEETS*@
@@ -197,6 +198,11 @@
 
         .login-modal-template .render-divider-right {
             border: none;
+        }
+
+        .vm--modal .d-modal {
+            margin-left:5px;
+            margin-right:5px;
         }
     }
 </style>

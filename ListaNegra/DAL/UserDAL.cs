@@ -123,7 +123,8 @@ namespace ListaNegra.DAL
         public int UserID { get; set; }
         public string Title { get; set; }
         public List<string> Tags { get; set; }
-        public string Data { get; set; }
+        public string Description { get; set; }
+        public string  Code { get; set; }
     }
 
 

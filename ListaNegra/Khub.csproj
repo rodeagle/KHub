@@ -354,7 +354,6 @@
     <Content Include="App\src\components\CreatePostModal.vue" />
     <Content Include="App\src\components\Header.vue" />
     <Content Include="App\src\components\InputImageHidden.vue" />
-    <Content Include="App\src\components\CodeEditor.vue" />
     <None Include="compilerconfig.json" />
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>

@@ -64,13 +64,29 @@ namespace ListaNegra.Controllers
             }
         }
 
-        public async Task<ActionResult> CreatePost(string title, int projectid,  string[] tags, string data) {
+        public async Task<ActionResult> CreatePost(string title, int projectid,  string[] tags, string description, string code) {
 
             try {
-                var result = await _userBL.CreatePost(title, projectid, tags, data);
+                var result = await _userBL.CreatePost(title, projectid, tags, description, code);
                 return Json(new { success = true });
 
             } catch (Exception ex) {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        public async Task<ActionResult> GetUserProjects()
+        {
+
+            try
+            {
+                var userid = ApplicationUserManager.User.UserID;
+                var result = await _userBL.GetUserProjects(userid);
+                return Json(new { success = true,  result });
+
+            }
+            catch (Exception ex)
+            {
                 return Json(new { success = false, message = ex.Message });
             }
         }

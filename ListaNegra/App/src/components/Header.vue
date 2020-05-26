@@ -81,6 +81,7 @@
 <script>
 
     import vuetag from '@johmun/vue-tags-input';
+    import VuePrismEditor from "vue-prism-editor";
 
     export default {
         props: {
@@ -99,35 +100,63 @@
                         template: `
                         <div class="p-3">
                             <h2>Create New Post</h2>
-                            <label class="font-weight-bold">Name</label><br>
-                            <input name="Name" class="form-control" v-model="Name"/><br>
-                            <div v-show="!!!createPostValidation['Name.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
-                            <v-switch flat dense v-model="projectIsPublic" color="success" inset :label="'Make the project public'"></v-switch>
+                            <label class="font-weight-bold">Title</label>
+                            <small>Make it sound and clear</small><br>
+                            <input name="Title" class="form-control" v-model="Title"/>
+                            <div v-show="!!!validation['Title.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+                            <label class="font-weight-bold">Tags</label>
+                            <small>What defines the solution (multiple answers)</small>
+                            <vue-tag-input v-model="Tags"></vue-tag-input>
+                            <label class="font-weight-bold">Project</label>
+                            <small>(it will inherit the projects visibility)</small>
+                            <select v-model="selected" class="form-control">
+                              <option v-for="option in options" v-bind:value="option.value">
+                                {{ option.text }}
+                              </option>
+                            </select>
+                            <label class="font-weight-bold">Description</label>
+                            <small>Add instructions or a brief description (Accepts HTML)</small>
+                            <textarea rows="10" class="w-100 form-control" v-model="Description"></textarea><br>
+                            <div v-show="!!!validation['Description.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+                            <label class="font-weight-bold">Code</label>
+                            <small>Code section to attach</small>
+                            <prism-editor :code="code" language="js" :line-numbers="true"></prism-editor>
+                            <br>
                             <div class="text-right">
-                                <v-btn class="btn-block" :loading="createProjectSubmitting" :disabled="createProjectSubmitting" color="primary" @click="_CreateProject">Create</v-btn>
+                                <v-btn class="btn-block" :loading="createPostSubmitting" :disabled="createPostSubmitting" color="primary" @click="_CreatePost">Create</v-btn>
                             </div>
                         </div>
                         `,
                         //props: [],
                         components: {
                             'vue-tag-input': vuetag,
+                            'prism-editor': VuePrismEditor,
                         },
                         data: function () {
                             return {
                                 // create project
                                 createPostValidation: {
-                                    "ProjectName.Required": false
+                                    "Title.Required": false
                                 },
-                                Name: '',
-                                Tags: true,
-                                createPostSubmitting: false
+                                title: '',
+                                tags: [],
+                                createPostSubmitting: false,
+                                selected: '',
+                                options: [
+                                  { text: 'Uno', value: 'A' },
+                                  { text: 'Dos', value: 'B' },
+                                  { text: 'Tres', value: 'C' }
+                                ],
+                                code: '',
+                                description : '',
                             };
                         },
                         methods: {
                             _CreatePost: function () {
 
                                 this.createPostValidation = {
-                                    "Name.Required": !!this.Name && this.Name.length > 4,
+                                    "Title.Required": !!this.title && this.title.length > 4,
+                                    "Description.Required" : !!this.description && this.description.Description > 4,
                                 };
 
                                 let _validation = this.createPostValidation;
@@ -141,12 +170,12 @@
 
                                 this.createPostSubmitting = true;
 
-                                this.CreatePost(this.name, )
+                                this.CreatePost(this.data)
                                     .then(() => {
                                         this.$emit('close');
                                         this.$notify({
                                             title: 'Success:',
-                                            text: "Created Project successfully",
+                                            text: "Created Post successfully",
                                             type: 'success',
                                         });
                                         //setTimeout(() => {
@@ -169,7 +198,9 @@
                     },
                     {
                         height: 'auto',
-                        adaptive: true
+                        adaptive: true,
+                        classes: 'd-modal',
+                        scrollable : true
                     },
                     {}
                 );

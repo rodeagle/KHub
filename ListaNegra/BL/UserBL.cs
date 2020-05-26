@@ -143,7 +143,7 @@ namespace ListaNegra.BL
         /// <param name="data"></param>
         /// <returns></returns>
         /// has been reduced and used atomic methods and removed locks
-        public Task<bool> CreatePost(string title, int projectid, string[] tags, string data) {
+        public Task<bool> CreatePost(string title, int projectid, string[] tags, string description, string code) {
 
             var userid = ApplicationUserManager.User.UserID;
 
@@ -157,7 +157,8 @@ namespace ListaNegra.BL
                     UserID = userid,
                     Title = title,
                     ProjectID = projectid,
-                    Data = data,
+                    Description = description,
+                    Code = code,
                     Tags = tags.ToList()
                 };
 
@@ -178,6 +179,20 @@ namespace ListaNegra.BL
 
                 return true;
             });
+        }
+
+        public Task<IEnumerable<Project>> GetUserProjects(int userid)
+        {
+            return Task.Run(async () => {
+
+                var projects = await _userService.GetProjects();
+
+                var userproj = projects.Projects.Where(x => x.UserID == userid);
+
+                return userproj;
+
+            });
+
         }
     }
 }

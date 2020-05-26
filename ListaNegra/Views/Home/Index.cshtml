@@ -2,7 +2,9 @@
     ViewBag.Title = "K hub";
 }
 
-<div><code-editor></code-editor></div>
+@*<div><prism-editor></prism-editor></div>*@
+
+    <prism-editor :code="code" language="js"></prism-editor>
 
 @section scripts {
 
@@ -10,7 +12,6 @@
         //start main app
         let controller = {
             components: {
-                'code-editor': window.VueApp.Components.CodeEditor
             },
             data: {},
             methods: {

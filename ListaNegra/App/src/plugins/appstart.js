@@ -6,6 +6,8 @@ import VModal from 'vue-js-modal';
 import Notifications from 'vue-notification';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import Prism from 'prismjs';
+import VuePrismEditor from "vue-prism-editor";
 
 export default {
 
@@ -16,6 +18,11 @@ export default {
         Vue.use(VModal, { dynamic: true, /*injectModalsContainer: true */ /*dynamicDefaults: { clickToClose: false }*/ });
         Vue.use(Notifications);
         Vue.use(VueAxios, axios);
+
+        let _globalComponents = {
+            'prism-editor' : VuePrismEditor,
+            'header-section': header
+        };
 
         let app = {
             vuetify : vuetify
@@ -29,9 +36,9 @@ export default {
         }
 
         if (app.components) {
-            app.components = $.extend({}, app.components, { 'header-section' : header });
+            app.components = $.extend({}, app.components, _globalComponents );
         } else {
-            app.components = { 'header-section' : header };
+            app.components = _globalComponents;
         }
 
 
