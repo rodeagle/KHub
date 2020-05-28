@@ -1,0 +1,38 @@
+﻿@model IEnumerable<KHub.DAL.Project>
+
+@{
+    ViewBag.Title = "K hub";
+}
+
+<div class="index-container">
+
+</div>
+
+
+<style>
+
+</style>
+
+@section scripts {
+
+    <script>
+        //start main app
+        let controller = {
+            components: {
+            },
+            data: {},
+            methods: {
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            }
+        };
+        console.log('calling vue app');
+        console.log(VueApp);
+        VueApp.Start(controller);
+    </script>
+
+}

@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - KHub</title>
+
+    @*Style sheets*@
+    <link href="@("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css")" rel="stylesheet">
+    <link href='@("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css")' rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-prism-editor/dist/VuePrismEditor.css">
+    <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism-tomorrow.css" />
+    @*END STYLE SHEETS*@
+
+    @{
+        var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.PathBase, Url.Content("~"));
+        var relativeUrl = Url.Content("~/");
+
+        if (baseUrl.Contains("localhost"))
+        {
+            baseUrl = "~";
+        }
+
+        var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+        var actionName = this.ViewContext.RouteData.Values["action"].ToString();
+
+    }
+</head>
+<body>
+    <v-app id="MainApp">
+        @*@Html.Partial("~/Views/Shared/_Header.cshtml")*@
+        <header-section v-bind:issignedin="@Identity.IsSignedIn.ToString().ToLower()" @if (Identity.IsSignedIn) { <text> alias="@Identity.User.Alias" </text> }></header-section>
+        <div class="hover" v-bind:class="{'disabled': isMounted }"></div>
+        <notifications position="top right"></notifications>
+        <div class="container body-content" style="padding-top:64px">
+            @RenderBody()
+            <hr />
+            <div class="footer-container-ads text-center">
+                Debug:
+                <br /> Is Signed In : @Identity.IsSignedIn
+                <br /> ADDS GO HERE
+                @*<br />     @baseUrl
+                <br />     @relativeUrl*@
+            </div>
+        </div>
+        <v-footer paddless height="auto" color="red" class="text-center">
+            <v-row justify="center">
+                <v-col class="col-12" tile>
+                    <v-btn icon class="mx-4">
+                        <v-icon size="24px">home</v-icon>
+                    </v-btn>
+                    <v-btn icon class="mx-4">
+                        <v-icon size="24px">home</v-icon>
+                    </v-btn>
+                    <v-btn icon class="mx-4">
+                        <v-icon size="24px">home</v-icon>
+                    </v-btn>
+                    <v-btn icon class="mx-4">
+                        <v-icon size="24px">home</v-icon>
+                    </v-btn>
+                </v-col>
+                <v-divider tile></v-divider>
+                <v-card-text class="white--text">
+                    {{ new Date().getFullYear() }} — <strong>K.Hub</strong>
+                </v-card-text>
+            </v-row>
+        </v-footer>
+    </v-app>
+</body>
+</html>
+
+@*<script>
+
+        let controller = {
+            components: {},
+            data: {},
+            methods: {
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            }
+        };
+        console.log('calling vue app');
+        console.log(VueApp);
+        VueApp.Start(controller);
+
+    </script>*@
+
+
+@*create the script tags*@
+
+@{
+    string path = AppDomain.CurrentDomain.BaseDirectory.Substring(0, AppDomain.CurrentDomain.BaseDirectory.IndexOf("\\bin")) +"\\App\\dist";
+    //path = Context.Request.Path;
+    var Files = System.IO.Directory.EnumerateFiles(path);
+
+}
+
+@foreach (var file in Files)
+{
+    // contains the cache busting and gets latest version
+    // extract main bundle
+    if (file.Contains("bundle"))
+    {
+        var fullname = "bundle" + file.Substring(file.IndexOf("bundle") + "bundle".Length);
+        <text>
+            <script src="@Url.Content($"~/App/dist/{fullname}")"></script>
+        </text>
+    }
+}
+
+@*<script>
+        require(['jquery', 'bootstrap', 'vue', 'vueLoader'], function () {
+
+            $.fn.serializeObject = function() {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function() {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+
+
+        });
+    </script>*@
+
+<style>
+
+    .vue-tags-input {
+        max-width: none !important;
+        width: 100%;
+    }
+
+    .form-group label {
+        font-weight: bolder;
+    }
+
+    .hover {
+        background-color: white;
+        z-index: 100;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        opacity: 1;
+        top: 0;
+        left: 0;
+        transition: opacity 2s;
+    }
+
+        .hover.disabled {
+            transition: opacity 2s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    .clickable {
+        cursor: pointer;
+    }
+
+    .input-validation-error {
+        background-color: #ffcfdf;
+        border-color: red;
+    }
+
+    .login-modal-template .render-divider-right {
+        border-right: 1px solid black;
+    }
+
+        .login-modal-template .render-divider-right:before {
+            content: 'or';
+            position: absolute;
+            top: 50%;
+            right: -8px;
+            background-color: white;
+        }
+
+
+    @@media (max-width:767px) {
+        .login-modal-template .render-divider-right:before {
+            content: '';
+            display: none;
+        }
+
+        .login-modal-template .render-divider-right {
+            border: none;
+        }
+
+        .vm--modal .d-modal {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    }
+</style>
+
+@RenderSection("scripts", false)
