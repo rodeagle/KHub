@@ -1,0 +1,26 @@
+﻿/*utilities*/
+.font-size-unset {
+  font-size: unset !important; }
+
+.border-right-2-white {
+  border-right: 2px solid white; }
+
+/*footer {
+    background-color: #1D2124;
+    color: white;
+    font-weight: bolder;
+    height: 300px;
+}*/
+/*footer a {
+    color: white;
+}
+
+footer a:hover {
+    color: lightgray;
+}*/
+.page-title {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-style: italic; }
+
+.item-container {
+  height: 500px; }
