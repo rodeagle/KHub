@@ -26,5 +26,7 @@ namespace KHub.BL
 
         Task<IEnumerable<string>> GetMostCommonTags();
 
+        Task<IEnumerable<Post>> GetMostRecentPosts();
+
     }
 }

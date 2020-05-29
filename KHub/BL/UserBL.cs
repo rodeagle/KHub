@@ -10,6 +10,8 @@ using KHub.DAL;
 using System.Threading.Tasks;
 using System.Runtime.Caching;
 using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace KHub.BL
 {
@@ -69,13 +71,16 @@ namespace KHub.BL
 
                 var fullKey = $"{alias}_{key}_{pass}";
 
-                var hash = fullKey.GetHashCode();
+                string hash = "";
+                SHA512 alg = SHA512.Create();
+                byte[] result = alg.ComputeHash(Encoding.UTF8.GetBytes(fullKey));
+                hash = Encoding.UTF8.GetString(result);
 
                 _Users.Users.Add(new User()
                 {
                     Alias = alias,
                     UserID = key,
-                    Hash = hash.ToString()
+                    Hash = hash
                 });
 
                 _Users.TopID += 1;
@@ -100,7 +105,17 @@ namespace KHub.BL
 
                 var users = await _userService.GetUsers();
 
-                User res = users.Users.FirstOrDefault(x => x.Hash == $"{alias}_{x.UserID}_{pass}".GetHashCode().ToString());
+                string hash = "";
+                SHA512 alg = SHA512.Create();
+
+                Func<int, string> GenerateHash = (userid) => {
+                    var key = $"{alias}_{userid}_{pass}";
+                    byte[] result = alg.ComputeHash(Encoding.UTF8.GetBytes(key));
+                    hash = Encoding.UTF8.GetString(result);
+                    return hash;
+                };
+
+                User res = users.Users.FirstOrDefault(x => x.Hash == GenerateHash(x.UserID));
 
                 return res;
 
@@ -197,6 +212,23 @@ namespace KHub.BL
                 var userproj = projects.Projects.Where(x => x.UserID == userid);
 
                 return userproj;
+
+            });
+
+        }
+
+        public Task<IEnumerable<Post>> GetMostRecentPosts(){
+
+            return Task.Run(async () => {
+
+                var posts = await _userService.GetPosts();
+                var projects = await _userService.GetProjects();
+
+                var _project = projects.Projects.Where(x=> x.Public);
+
+                var _posts = posts.Posts.Where(x=> _project.Any(y=> y.ProjectID == x.ProjectID));//.Where(x=> _project.Any(y=> y.ProjectID == x.ProjectID));
+
+                return _posts;
 
             });
 

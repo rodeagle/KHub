@@ -6,3 +6,6 @@
 /KHub/App/dist/bundle_2800df6b8d87c726fd90.js
 /KHub/bin/Debug/netcoreapp3.1
 /KHub/obj
+/.vs
+/KHub/wwwroot/App/dist
+/KHub/wwwroot/App/node_modules

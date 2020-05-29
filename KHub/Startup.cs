@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using KHub.BL;
+using KHub.DAL;
 using KHub.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +31,8 @@ namespace KHub
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IUserBL, UserBL>();
+            services.AddScoped<IUserDAL, UserDAL>();
             services.AddMemoryCache();
 
         }
