@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using KHub.Models;
 using KHub.BL;
 using KHub.DAL;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
 
 namespace KHub.Controllers
 {
@@ -15,15 +17,27 @@ namespace KHub.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUserBL _userBL;
-
-        public HomeController(ILogger<HomeController> logger, IUserBL userbl)
+        private readonly IWebHostEnvironment _env;
+        private readonly IFileProvider dist;
+        public HomeController(ILogger<HomeController> logger, IUserBL userbl, IWebHostEnvironment env, IFileProvider fileProvider)
         {
             _logger = logger;
             _userBL = userbl;
+            _env = env;
+            dist = fileProvider;
+        }
+
+        public string GetBundle()
+        {
+            var files = dist.GetDirectoryContents("wwwroot//App//dist");
+            return "App//dist//" + files.First(x => x.Name.Contains("bundle")).Name;
+
         }
 
         public async Task<IActionResult> Index()
         {
+
+            ViewData["Bundle"] = GetBundle();
 
             var posts = await _userBL.GetMostRecentPosts();
 

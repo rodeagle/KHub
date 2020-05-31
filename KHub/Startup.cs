@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using KHub.BL;
@@ -12,12 +13,14 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 namespace KHub
 {
     public class Startup
     {
+        public static string Enviroment;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,25 +37,30 @@ namespace KHub
             services.AddScoped<IUserBL, UserBL>();
             services.AddScoped<IUserDAL, UserDAL>();
             services.AddMemoryCache();
+            /// add access to the dist 
+            IFileProvider physicalProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 
+            services.AddSingleton<IFileProvider>(physicalProvider);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Enviroment = env.IsDevelopment() ?  "dev" : "prod";
 
             app.UseMyMiddleware();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Home/Error");
+            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            //    app.UseHsts();
+            //}
+            app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -68,11 +76,11 @@ namespace KHub
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.Run(async context =>
-            {
-                Identity.Init(context);
+            //app.Run(async context =>
+            //{
+            //    Identity.Init(context);
 
-            });
+            //});
 
         }
     }

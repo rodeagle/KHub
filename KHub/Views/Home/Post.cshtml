@@ -1,0 +1,44 @@
+﻿@model KHub.DAL.PostDetailViewModel
+
+@{
+    ViewBag.Title = "K hub";
+}
+
+<div class="index-container">
+
+    <div class="pt-3">
+        <h2>@Model.Title</h2>
+    </div>
+    <hr />
+    <div class="row justify-content-center">
+
+
+
+    </div>
+</div>
+
+
+@section scripts {
+
+
+    <script>
+        //start main app
+        let controller = {
+            components: {
+            },
+            data: {},
+            methods: {
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            }
+        };
+        //console.log('calling vue app');
+        //console.log(VueApp);
+        VueApp.Start(controller);
+    </script>
+
+}
