@@ -224,7 +224,8 @@
                         height: 'auto',
                         adaptive: true,
                         classes: 'd-modal',
-                        scrollable : true
+                        scrollable: true,
+                        clickToClose : false
                     },
                     {}
                 );
@@ -303,7 +304,8 @@
                     },
                     {
                         height: 'auto',
-                        adaptive: true
+                        adaptive: true,
+                        clickToClose : false
                     },
                     {}
                 );
@@ -445,7 +447,8 @@
                     },
                     {
                         height: 'auto',
-                        adaptive: true
+                        adaptive: true,
+                        clickToClose : false
                         //width: 'auto'
                     },
                     //{

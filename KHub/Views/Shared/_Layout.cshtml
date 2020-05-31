@@ -42,7 +42,7 @@
                 <br /> Is Signed In : @Identity.IsSignedIn
                 <br /> ADDS GO HERE
                 @*<br />     @baseUrl
-                <br />     @relativeUrl*@
+                    <br />     @relativeUrl*@
             </div>
         </div>
         <v-footer paddless height="auto" color="red" class="text-center">
@@ -71,48 +71,11 @@
 </body>
 </html>
 
-@*<script>
-
-        let controller = {
-            components: {},
-            data: {},
-            methods: {
-            },
-            mounted: function () {
-
-            },
-            created: function () {
-
-            }
-        };
-        console.log('calling vue app');
-        console.log(VueApp);
-        VueApp.Start(controller);
-
-    </script>*@
-
 
 @*create the script tags*@
 
-@{
-    string path = AppDomain.CurrentDomain.BaseDirectory.Substring(0, AppDomain.CurrentDomain.BaseDirectory.IndexOf("\\bin")) +"\\wwwroot\\App\\dist";
-    //path = Context.Request.Path;
-    var Files = System.IO.Directory.EnumerateFiles(path);
+<script src="@ViewData["Bundle"]"></script>
 
-}
-
-@foreach (var file in Files)
-{
-    // contains the cache busting and gets latest version
-    // extract main bundle
-    if (file.Contains("bundle"))
-    {
-        var fullname = "bundle" + file.Substring(file.IndexOf("bundle") + "bundle".Length);
-        <text>
-            <script src="@Url.Content($"~/App/dist/{fullname}")"></script>
-        </text>
-    }
-}
 
 @*<script>
         require(['jquery', 'bootstrap', 'vue', 'vueLoader'], function () {

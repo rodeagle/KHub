@@ -9,3 +9,6 @@
 /.vs
 /KHub/wwwroot/App/dist
 /KHub/wwwroot/App/node_modules
+/KHub/bin/Release/netcoreapp3.1
+/KHub/Properties/PublishProfiles
+/KHub/.config
