@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using KHub.DAL;
-using KHub.DALModels;
 using KHub.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -60,6 +59,8 @@ namespace KHub.DAL
                 request.AddHeader("name", name);
             }
 
+            request.AddHeader("private", "false");
+
             request.AddJsonBody(json);
 
             var response = _restClient.Post(request);
@@ -99,7 +100,7 @@ namespace KHub.DAL
         public int UserID { get; set; }
         public string Title { get; set; }
         public int PostID { get; set; }
-        public string PostBInID { get; set; }
+        public string PostBinID { get; set; }
     }
 
     public class PostsBin
@@ -123,6 +124,7 @@ namespace KHub.DAL
         public List<string> Tags { get; set; }
         public string Description { get; set; }
         public string  Code { get; set; }
+        public bool Private { get; set; }
     }
 
 
@@ -179,19 +181,16 @@ namespace KHub.DAL
         // locks are only required for PUT and GET methods CREATE not at the moment
 
 
-        public Task<bool> UpdateUsers(UserBin users) {
+        public async Task<bool> UpdateUsers(UserBin users) {
 
-            return Task.Run(()=> {
+            lock (users_lock)
+            {
+                dynamic json = JsonConvert.SerializeObject(users);
+                _server.Put(Bins.Users, json);
+                MemoryCache.Default.Set("Users", users, DateTimeOffset.Now.AddHours(6));
+                return true;
+            }
 
-                lock (users_lock) {
-                    dynamic json = JsonConvert.SerializeObject(users);
-                    _server.Put(Bins.Users, json);
-                    MemoryCache.Default.Add("Users", users, DateTimeOffset.Now.AddHours(6));
-                    return true;
-                }
-            
-            });
-        
         }
 
 
@@ -208,7 +207,7 @@ namespace KHub.DAL
                     {
                         var response = _server.Get(Bins.Users);
                         users = JsonConvert.DeserializeObject<UserBin>(response);
-                        MemoryCache.Default.Add("Users", users, DateTimeOffset.Now.AddHours(6));
+                        MemoryCache.Default.Set("Users", users, DateTimeOffset.Now.AddHours(6));
                     }
                     return users;
                 }
@@ -228,7 +227,7 @@ namespace KHub.DAL
                 lock (projects_lock) { 
                     dynamic json = JsonConvert.SerializeObject(projects);
                     _server.Put(Bins.Projects, json);
-                    MemoryCache.Default.Add("Projects", projects, DateTimeOffset.Now.AddHours(6));
+                    MemoryCache.Default.Set("Projects", projects, DateTimeOffset.Now.AddHours(6));
                     return true;
                 }
     
@@ -263,7 +262,7 @@ namespace KHub.DAL
                         // deserialize into a c# object
                         var _projects = JsonConvert.DeserializeObject<ProjectBin>(response);
 
-                        MemoryCache.Default.Add("Projects", _projects, DateTimeOffset.Now.AddHours(6));
+                        MemoryCache.Default.Set("Projects", _projects, DateTimeOffset.Now.AddHours(6));
 
                         return _projects;
 
@@ -294,7 +293,7 @@ namespace KHub.DAL
                 lock (posts_lock) {
                     dynamic json = JsonConvert.SerializeObject(posts);
                     _server.Put(Bins.Posts, json);
-                    MemoryCache.Default.Add("Posts", posts, DateTimeOffset.Now.AddHours(6));
+                    MemoryCache.Default.Set("Posts", posts, DateTimeOffset.Now.AddHours(6));
                     return true;
                 }
             });
@@ -317,11 +316,31 @@ namespace KHub.DAL
                     var response = _server.Get(Bins.Posts);
 
                     var postbin = JsonConvert.DeserializeObject<PostsBin>(response);
-
+                    MemoryCache.Default.Set("Posts", postbin, DateTimeOffset.Now.AddHours(6));
                     return postbin;
                 }
 
             });
+        }
+
+        public Task<PostDetail> GetPostDetail(string postDetailId) {
+
+            return Task.Run(() => {
+
+                var key = $"$PostDetail_{postDetailId}";
+                var postDetail = (PostDetail)MemoryCache.Default.Get(key);
+
+                if (postDetail != null)
+                    return postDetail;
+
+                var response = _server.Get($"b/{postDetailId}");
+
+                postDetail = JsonConvert.DeserializeObject<PostDetail>(response);
+                MemoryCache.Default.Set(key, postDetail, DateTimeOffset.Now.AddMinutes(5));
+                return postDetail;
+
+            });
+
         }
     }
 }

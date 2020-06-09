@@ -1,0 +1,99 @@
+﻿@using Newtonsoft.Json;
+@using Newtonsoft.Json.Converters;
+@model IEnumerable<KHub.DAL.Project>
+
+@{
+    ViewBag.Title = "Projects";
+    var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.Host.Value, Url.Content("~"));
+}
+
+<div class="index-container">
+    <br />
+    <h2>Most Recent Projects </h2>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3" v-for="pro in projects">
+            <div class="p-2 border-box">
+                <div class="text-center font-weight-bold pb-2">{{pro.Name}}</div>
+                <div class="text-center">
+                    <v-icon x-large>
+                        folder_shared
+                    </v-icon>
+                </div>
+                <div class="pt-3 pb-3 text-center">
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on }">
+                            <v-btn v-on="on" @@click="CopyToClip(('@baseUrl' + 'projects?projectid={{proPostID}}'))" small>
+                                <v-icon small>share</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Share : Copy to clipboard</span>
+                    </v-tooltip>
+                    @*<v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+                <v-btn v-on="on" small>
+                    <v-icon small>favorite</v-icon>
+                </v-btn>
+            </template>
+            <span>Share : Copy to clipboard</span>
+        </v-tooltip>*@
+                    @*<v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+                <v-btn v-on="on" small>
+                    <v-icon small>share</v-icon>
+                </v-btn>
+            </template>
+            <span>Share : Copy to clipboard</span>
+        </v-tooltip>*@
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on }">
+                            <v-btn v-on="on" small :href="`Home/Index?projectid=${pro.ProjectID}`">
+                                <v-icon small>launch</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Check project items</span>
+                    </v-tooltip>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+
+
+    <script>
+        //start main app
+        let controller = {
+            components: {
+                //'prism-editor' : window.VueApp.Components.prismEditor
+            },
+            data: {
+                projects: JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model))`)
+            },
+            methods: {
+                GenerateUrl: function () {
+                    return true;
+                },
+                CopyToClip: function (text) {
+                    this.CopyToClipboard(text);
+                    this.$notify({
+                        title: 'Success',
+                        text: "Copy to clipboard succesfully",
+                        type: 'success',
+                    });
+                }
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            }
+        };
+        //console.log('calling vue app');
+        //console.log(VueApp);
+        VueApp.Start(controller);
+    </script>
+
+}

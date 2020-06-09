@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace KHub
 {
@@ -37,6 +38,12 @@ namespace KHub
             services.AddScoped<IUserBL, UserBL>();
             services.AddScoped<IUserDAL, UserDAL>();
             services.AddMemoryCache();
+
+            var mvcBuilder = services.AddControllersWithViews();
+
+            #if DEBUG
+            mvcBuilder.AddRazorRuntimeCompilation();
+            #endif
             /// add access to the dist 
             IFileProvider physicalProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 

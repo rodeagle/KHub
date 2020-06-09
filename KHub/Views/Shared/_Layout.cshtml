@@ -15,39 +15,47 @@
     @*END STYLE SHEETS*@
 
     @{
-        var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.PathBase, Url.Content("~"));
-        var relativeUrl = Url.Content("~/");
+        var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.Host.Value, Url.Content("~"));
+        //var relativeUrl = Url.Content("~/");
 
-        if (baseUrl.Contains("localhost"))
-        {
-            baseUrl = "~";
-        }
+        //if (baseUrl.Contains("localhost"))
+        //{
+        //    baseUrl = "~";
+        //}
 
         var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
         var actionName = this.ViewContext.RouteData.Values["action"].ToString();
 
+        var bundleUrl = $"{baseUrl}//{ViewData["Bundle"]}";
+
+
     }
+
+    @*create the script tags*@
+    <script src="@bundleUrl"></script>
+
 </head>
 <body>
     <v-app id="MainApp">
-        @*@Html.Partial("~/Views/Shared/_Header.cshtml")*@
-        <header-section v-bind:issignedin="@Identity.IsSignedIn.ToString().ToLower()" @if (Identity.IsSignedIn) { <text> alias="@Identity.User.Alias" </text> }></header-section>
+        <header-section 
+                        v-bind:issignedin="@Identity.IsSignedIn.ToString().ToLower()" 
+                        v-bind:baseurl="'@string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.Host.Value, Url.Content("~"))'"
+                        @if (Identity.IsSignedIn) { <text> alias="@Identity.User.Alias" </text> }>
+        </header-section>
         <div class="hover" v-bind:class="{'disabled': isMounted }"></div>
         <notifications position="top right"></notifications>
         <div class="container body-content" style="padding-top:64px">
             @RenderBody()
-            <hr />
+            @*<hr />
             <div class="footer-container-ads text-center">
                 Debug:
                 <br /> Is Signed In : @Identity.IsSignedIn
                 <br /> ADDS GO HERE
-                @*<br />     @baseUrl
-                    <br />     @relativeUrl*@
-            </div>
+            </div>*@
         </div>
         <v-footer paddless height="auto" color="red" class="text-center">
             <v-row justify="center">
-                <v-col class="col-12" tile>
+                @*<v-col class="col-12" tile>
                     <v-btn icon class="mx-4">
                         <v-icon size="24px">home</v-icon>
                     </v-btn>
@@ -60,7 +68,7 @@
                     <v-btn icon class="mx-4">
                         <v-icon size="24px">home</v-icon>
                     </v-btn>
-                </v-col>
+                </v-col>*@
                 <v-divider tile></v-divider>
                 <v-card-text class="white--text">
                     {{ new Date().getFullYear() }} — <strong>K.Hub</strong>
@@ -71,34 +79,6 @@
 </body>
 </html>
 
-
-@*create the script tags*@
-
-<script src="@ViewData["Bundle"]"></script>
-
-
-@*<script>
-        require(['jquery', 'bootstrap', 'vue', 'vueLoader'], function () {
-
-            $.fn.serializeObject = function() {
-                var o = {};
-                var a = this.serializeArray();
-                $.each(a, function() {
-                    if (o[this.name]) {
-                        if (!o[this.name].push) {
-                            o[this.name] = [o[this.name]];
-                        }
-                        o[this.name].push(this.value || '');
-                    } else {
-                        o[this.name] = this.value || '';
-                    }
-                });
-                return o;
-            };
-
-
-        });
-    </script>*@
 
 <style>
 
@@ -172,9 +152,30 @@
         min-height: 1000px;
     }
 
-    .border-box {
+    /*.border-box {
         border: 1px solid #E5E5E5;
         box-shadow: 0px 0px 10px 1px #E5E5E5;
+        /*height:235px;*/
+    }*/
+
+    .max-height-100 {
+        max-height:100px;
+    }
+
+    .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+    }
+
+    .h-100px{
+        height:100px;
+    }
+
+    .mobile-search-input{
+        height:30px;background-color:white;position:fixed;top:56px;left:0;z-index:100;width:100%;
     }
 </style>
 

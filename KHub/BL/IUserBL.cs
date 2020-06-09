@@ -1,5 +1,6 @@
 ﻿using KHub.DAL;
 using KHub.Models;
+using KHub.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -28,5 +29,12 @@ namespace KHub.BL
 
         Task<IEnumerable<Post>> GetMostRecentPosts();
 
+        Task<PostDetailViewModel> GetPostDetail(int postBinId);
+
+        Task<IEnumerable<Project>> GetAllProjects();
+
+        Task<IndexHomeViewModel> GetPostsFiltered(int pid, string search, bool favorites, bool myposts);
+
+        Task<bool> AddPostToFavorites(int userid, int postid);
     }
 }

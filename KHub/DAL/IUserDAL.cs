@@ -1,5 +1,4 @@
-﻿using KHub.DALModels;
-using KHub.Models;
+﻿using KHub.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,5 +28,6 @@ namespace KHub.DAL
         Task<bool> UpdatePosts(PostsBin posts);
         Task<ProjectBin> GetProjects();
         Task<PostsBin> GetPosts();
+        Task<PostDetail> GetPostDetail(string postBinId);
     }
 }

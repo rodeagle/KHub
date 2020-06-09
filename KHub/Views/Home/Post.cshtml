@@ -1,4 +1,5 @@
-﻿@model KHub.DAL.PostDetailViewModel
+﻿@using Newtonsoft.Json;
+@model KHub.ViewModels.PostDetailViewModel
 
 @{
     ViewBag.Title = "K hub";
@@ -10,11 +11,16 @@
         <h2>@Model.Title</h2>
     </div>
     <hr />
-    <div class="row justify-content-center">
-
-
-
-    </div>
+    <p>
+        <h3>Description:</h3>
+        <div class="bordered" style="height:300px">
+            @Html.Raw(@Model.Description)
+        </div>
+    </p>
+    <h3>Code:</h3>
+    <prism-editor language="js" :code="code" :line-numbers="true"></prism-editor>
+    <hr />
+    <small>Author : </small>
 </div>
 
 
@@ -25,8 +31,11 @@
         //start main app
         let controller = {
             components: {
+                'prism-editor' : window.VueApp.Components.prismEditor
             },
-            data: {},
+            data: {
+                code : `@Html.Raw(Model.Code)`
+            },
             methods: {
             },
             mounted: function () {

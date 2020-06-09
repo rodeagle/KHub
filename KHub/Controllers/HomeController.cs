@@ -29,21 +29,41 @@ namespace KHub.Controllers
 
         public string GetBundle()
         {
+
             var files = dist.GetDirectoryContents("wwwroot//App//dist");
             return "App//dist//" + files.First(x => x.Name.Contains("bundle")).Name;
 
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int projectid = 0, bool favorite = false, bool myposts = false,  string search = "")
+        {
+            ViewData["Bundle"] = GetBundle();
+            var posts = await _userBL.GetPostsFiltered(projectid, search, favorite, myposts);
+
+            return View(posts);
+        }
+
+        [HttpGet]
+        [Route("~/post")]
+        public async Task<IActionResult> Post([FromQuery]int postid) {
+
+            ViewData["Bundle"] = GetBundle();
+            var post = await _userBL.GetPostDetail(postid);
+            return View(post);
+
+        }
+
+        [HttpGet]
+        [Route("~/projects")]
+        public async Task<IActionResult> Projects()
         {
 
             ViewData["Bundle"] = GetBundle();
-
-            var posts = await _userBL.GetMostRecentPosts();
-
-            return View(posts);
+            var projects = await _userBL.GetAllProjects();
+            return View(projects);
 
         }
+
 
         public class SignInModel {
             public string alias { get; set; }
@@ -145,6 +165,22 @@ namespace KHub.Controllers
             {
 
                 var result = await _userBL.GetMostCommonTags();
+                return Json(new { success = true, result });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddPostToFavorites ([FromBody] int postid)
+        {
+            try
+            {
+
+                var result = await _userBL.AddPostToFavorites(Identity.User.UserID, postid);
                 return Json(new { success = true, result });
 
             }

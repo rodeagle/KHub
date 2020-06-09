@@ -1,48 +1,121 @@
-﻿@model IEnumerable<KHub.DAL.Post>
+﻿@using Newtonsoft.Json;
+@model KHub.ViewModels.IndexHomeViewModel
 
 @{
     ViewBag.Title = "K hub";
+    var hasProjectID = Context.Request.Query["projectid"] != "";
+    var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.Host.Value, Url.Content("~"));
+
 }
 
 <div class="index-container">
+    <v-bottom-navigation v-model="bottomNav">
+        @*<v-tooltip bottom>
+            <template v-slot:activator="{ on }">*@
+        <v-btn @*v-on="on"*@ href="@Url.Action("Index","Home")">
+            <span>Recent</span>
+            <v-icon>mdi-history</v-icon>
+        </v-btn>
+        @*</template>
+                <span>Add a new project</span>
+            </v-tooltip>*@
 
-    <div class="pt-3">
-        <h2>Most Recent contributions</h2>
+        <v-btn v-if="@Identity.IsSignedIn.ToString().ToLower()">
+            <span>Favorites</span>
+            <v-icon>mdi-heart</v-icon>
+        </v-btn>
+
+        <v-btn href="@Url.Action("Projects","Home")">
+            <span>Projects</span>
+            <v-icon>mdi-map-marker</v-icon>
+        </v-btn>
+    </v-bottom-navigation>
+    <div class="pt-3 text-center text-md-left">
+        <h2>@Model.Title</h2>
     </div>
     <hr />
-    <div class="row justify-content-center">
+    <div class="row">
 
         @if (Model != null)
         {
 
-            @foreach (var item in Model)
+            @foreach (var item in Model.Posts)
             {
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                    <div class="p-2 border-box">
-                        <div class="text-center font-weight-bold pb-2">@item.Title</div>
-                        <div class="text-center">
-                            <v-icon x-large>
-                                extension
-                            </v-icon>
-                        </div>
-                        <div class="pt-3 pb-3 text-center">
-                            <v-btn small>
-                                <v-icon small>share</v-icon>
-                            </v-btn>
-                            <v-btn small>
-                                <v-icon small>favorite</v-icon>
-                            </v-btn>
-                            <v-btn small>
-                                <v-icon small>playlist_add</v-icon>
-                            </v-btn>
-                            <v-btn small>
-                                <v-icon small>launch</v-icon>
-                            </v-btn>
-                        </div>
-                    </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+
+            <v-card class="mx-auto">
+
+                <div class="text-center pt-12">
+                    <v-icon x-large>
+                        extension
+                    </v-icon>
                 </div>
 
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-card-text class="headline text-center h-100px truncate" v-on="on">
+                                @item.Title
+                            </v-card-text>
+                        </template>
+                        <span>@item.Title</span>
+                    </v-tooltip>
+                <v-card-actions class="p-0 border">
+                    <v-row justify="center"
+                           no-gutters absolute>
+                        <v-col>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text tile outline block large color="green" v-on="on" @@click="CopyToClip('@(baseUrl  + $"/Home/Index?postid={item.PostID}")')" small>
+                                        <v-icon small>share</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Share : Copy to clipboard</span>
+                            </v-tooltip>
+                        </v-col>
+                        <v-col>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text tile outline block large color="pink" v-on="on" small @@click="CreateAddToFav(@item.PostID)">
+                                        <v-icon small>favorite</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Add to your favorites</span>
+                            </v-tooltip>
+                        </v-col>
+
+                        <v-col>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text tile outline block large color="blue" v-on="on" small @@click="CreateAddToProjectModal(@item.PostID)">
+                                        <v-icon small>playlist_add</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Add to a current project</span>
+                            </v-tooltip>
+                        </v-col>
+
+                        <v-col>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text tile outline block large color="red" v-on="on" small href="@Url.Action("Post", "Home", new { postid = item.PostID })">
+                                        <v-icon small>launch</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Go to full detail</span>
+                            </v-tooltip>
+                        </v-col>
+                    </v-row>
+                </v-card-actions>
+            </v-card>
+        </div>
+
             }
+
+        }
+        else
+        {
+
+            <h3>There is no content to display at the moment</h3>
 
         }
 
@@ -60,6 +133,142 @@
             },
             data: {},
             methods: {
+                CopyToClip: function (text) {
+                    this.CopyToClipboard(text);
+                    this.$notify({
+                        title: 'Success',
+                        text: "Copy to clipboard succesfully",
+                        type: 'success',
+                    });
+                },
+                CreateAddToFav: function (postid) {
+                    if (!@(Identity.IsSignedIn.ToString().ToLower())) {
+                        this.$notify({
+                            title: 'Warning',
+                            text: "You must be signed in to add to your favorites",
+                            type: 'warn',
+                        });
+                        return;
+                    }
+                },
+                CreateAddToProjectModal: function (postid) {
+                    if (!@(Identity.IsSignedIn.ToString().ToLower())) {
+                        this.$notify({
+                            title: 'Warning',
+                            text: "You must be signed in to add to a current project",
+                            type: 'warn',
+                        });
+                        return;
+                    }
+                    this.$modal.show(
+                        {
+                            template: `
+                            <div class="p-3">
+                                <h2>Add Current contribution to a Project</h2>
+                                <label class="font-weight-bold">Projects</label><br>
+                            <select v-model="selected" class="form-control" placeholder="Select a Project">
+                              <option v-for="option in options" v-bind:value="option.value">
+                                {{ option.text }}
+                              </option>
+                            </select>
+                            <div v-show="!!!validation['Project.Required']" class="text-danger">You must select a project first</div>
+                                <div class="text-right">
+                                    <v-btn class="btn-block" :loading="favoriteSubmit" :disabled="favoriteSubmit" color="primary" @@click="_CreateProject">Add</v-btn>
+                                </div>
+                            </div>
+                            `,
+                            //props: [],
+                            data: function () {
+                                return {
+                                    // create project
+                                    validation: {
+                                        "Project.Required": true
+                                    },
+                                    selected: '',
+                                    options: [],
+                                    favoriteSubmit : false
+                                };
+                            },
+                            mounted: function () {
+                                let options = JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model.UserProjects))`);
+                                let newOpt = options.map((x, i) => {
+                                    return {
+                                        text: x.Name,
+                                        value: x.ProjectID
+                                    };
+                                });
+                                this.options = [...this.options, ...newOpt];
+                            },
+                            methods: {
+                                _AddToFavorite: function (projectid) {
+
+                                    this.validation = {
+                                        "ProjectName.Required": this.selected > 0,
+                                    };
+
+                                    let valid = this.Validate(this.validation);
+
+                                    if (!valid) {
+                                        return;
+                                    }
+
+                                    this.favoriteSubmit = true;
+
+                                    this.AddPostToFavorites(projectid, this.selected)
+                                        .then(() => {
+                                            this.$emit('close');
+                                            this.$notify({
+                                                title: 'Success:',
+                                                text: "Created Project successfully",
+                                                type: 'success',
+                                            });
+                                            //setTimeout(() => {
+                                            //    location.reload();
+                                            //}, 1000);
+                                        }).catch((error) => {
+                                            this.$notify({
+                                                title: 'Error:',
+                                                text: error,
+                                                type: 'error',
+                                            });
+                                            this.favoriteSubmit = false;
+                                        });
+
+                                }
+                            }
+                        },
+                        {
+                            //text: 'This text is passed as a property'
+                        },
+                        {
+                            height: 'auto',
+                            adaptive: true,
+                            clickToClose : false
+                        },
+                        {}
+                    );
+                },
+                _AddPostToFavorites: function (id) {
+                    this.AddPostToFavorites(id)
+                    .then(() => {
+                        this.$emit('close');
+                        this.$notify({
+                            title: 'Success:',
+                            text: "Created Post successfully",
+                            type: 'success',
+                        });
+                        //setTimeout(() => {
+                        //    location.reload();
+                        //}, 1000);
+                    }).catch((error) => {
+                        this.$notify({
+                            title: 'Error:',
+                            text: error,
+                            type: 'error',
+                        });
+                        this.createProjectSubmitting = false;
+                    });
+                }
             },
             mounted: function () {
 
