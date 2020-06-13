@@ -45,9 +45,9 @@ namespace KHub.BL
             }
             throw new Exception("Invalid credentials");
         }
-        public async Task<bool> CreateAccount(string alias, string pass) {
+        public async Task<bool> CreateAccount(string alias, string email, string pass) {
 
-            var res = await CreateUser(alias, pass);
+            var res = await CreateUser(alias,email, pass);
             if (res)
             {
                 var guid = Guid.NewGuid();
@@ -62,7 +62,7 @@ namespace KHub.BL
             return false;
         }
 
-        public async Task<bool> CreateUser(string alias, string pass) {
+        public async Task<bool> CreateUser(string alias,string email, string pass) {
 
             var _Users = await _userService.GetUsers();
             // deserialize into a c# object
@@ -78,6 +78,7 @@ namespace KHub.BL
             _Users.Users.Add(new User()
             {
                 Alias = alias,
+                Email = email,
                 UserID = key,
                 Hash = hash
             });
@@ -155,7 +156,7 @@ namespace KHub.BL
         /// <param name="data"></param>
         /// <returns></returns>
         /// has been reduced and used atomic methods and removed locks
-        public async Task<bool> CreatePost(string title, int projectid, string[] tags, string description, string code) {
+        public async Task<bool> CreatePost(string title, int projectid, string[] tags, string description, string[] codes) {
 
             var userid = Identity.User.UserID;
 
@@ -167,7 +168,7 @@ namespace KHub.BL
                 Title = title,
                 ProjectID = projectid,
                 Description = description,
-                Code = code,
+                Codes = codes.ToList(),
                 //Tags = tags.ToList()
             };
 
@@ -237,16 +238,29 @@ namespace KHub.BL
         {
             var postbin = await _userService.GetPosts();
 
-            var postBinId = postbin.Posts.FirstOrDefault(x => x.PostID == postid).PostBinID;
+            var post = postbin.Posts.FirstOrDefault(x => x.PostID == postid);
+
+            var postBinId = post.PostBinID;
+
+            var users = await _userService.GetUsers();
+
+            var user = users.Users.FirstOrDefault(x => x.UserID == post.UserID);
 
             var postDetail = await _userService.GetPostDetail(postBinId);
+
+            var projects = await _userService.GetProjects();
+
+            var project = projects.Projects.FirstOrDefault(x => x.ProjectID == post.ProjectID);
 
             var model = new PostDetailViewModel()
             {
                 Title = postDetail.Title,
                 Description = postDetail.Description,
-                Code = postDetail.Code
-
+                Codes = postDetail.Codes,
+                Author = user.Alias,
+                PostID = post.PostID,
+                ProjectID = post.ProjectID,
+                ProjectName = project.Name
             };
 
             return model;
@@ -269,6 +283,20 @@ namespace KHub.BL
             var userProjects = Enumerable.Empty<Project>();
             if (customerid > 0) { 
                 userProjects = projects.Projects.Where(x => x.UserID == customerid);
+            }
+            // show only favorites
+            if (favorites)
+            {
+                var users = Identity.User.Favorites;
+                var _posts = posts.Posts.Where(x=> users.Contains(x.PostID));
+
+                return new IndexHomeViewModel()
+                {
+                    Title = "your Favorite Posts",
+                    Posts = _posts,
+                    UserProjects = userProjects
+                };
+
             }
 
             // most recent
@@ -318,11 +346,6 @@ namespace KHub.BL
                 };
 
             }
-            // show only favorites
-            if (favorites)
-            {
-                return null;
-            }
             // show only my posts
             if (customerid > 0 && myposts)
             {
@@ -352,6 +375,17 @@ namespace KHub.BL
 
             return true;
 
+        }
+
+        public async Task<bool> AddPostToProject(int postid, int projectid) {
+
+            var projects = await _userService.GetProjects();
+
+            projects.Projects.First(x => x.ProjectID == projectid).AddedPosts.Add(postid);
+
+            await _userService.UpdateProjects(projects);
+
+            return true;
         }
     }//
 }//

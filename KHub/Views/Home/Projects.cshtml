@@ -12,6 +12,49 @@
     <h2>Most Recent Projects </h2>
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3" v-for="pro in projects">
+            <v-card class="mx-auto">
+                <div class="text-center pt-12">
+                    <v-icon x-large>
+                        extension
+                    </v-icon>
+                </div>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                        <v-card-text class="headline text-center h-100px truncate blind-100-box" v-on="on">
+                            {{pro.Name}}
+                        </v-card-text>
+                    </template>
+                    <span>{{pro.Name}}</span>
+                </v-tooltip>
+                <v-card-actions class="p-0 border">
+                    <v-row justify="center"
+                           no-gutters absolute>
+                        <v-col>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text tile outline block large color="success" v-on="on" @@click="CopyToClip(('@baseUrl' + 'projects?projectid={{proPostID}}'))" small>
+                                        <v-icon small>share</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Share : Copy to clipboard</span>
+                            </v-tooltip>
+                        </v-col>
+
+                        <v-col>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text tile outline block large color="red" v-on="on" small :href="`Home/Index?projectid=${pro.ProjectID}`">
+                                        <v-icon small>launch</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Check project items</span>
+                            </v-tooltip>
+                        </v-col>
+                    </v-row>
+                </v-card-actions>
+            </v-card>
+        </div>
+        @*<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3" v-for="pro in projects" v-if="false">
             <div class="p-2 border-box">
                 <div class="text-center font-weight-bold pb-2">{{pro.Name}}</div>
                 <div class="text-center">
@@ -28,22 +71,6 @@
                         </template>
                         <span>Share : Copy to clipboard</span>
                     </v-tooltip>
-                    @*<v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-                <v-btn v-on="on" small>
-                    <v-icon small>favorite</v-icon>
-                </v-btn>
-            </template>
-            <span>Share : Copy to clipboard</span>
-        </v-tooltip>*@
-                    @*<v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-                <v-btn v-on="on" small>
-                    <v-icon small>share</v-icon>
-                </v-btn>
-            </template>
-            <span>Share : Copy to clipboard</span>
-        </v-tooltip>*@
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
                             <v-btn v-on="on" small :href="`Home/Index?projectid=${pro.ProjectID}`">
@@ -54,7 +81,7 @@
                     </v-tooltip>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
 </div>
 

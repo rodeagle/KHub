@@ -13,13 +13,13 @@ namespace KHub.BL
     public interface IUserBL
     { 
 
-        Task<bool> CreateAccount(string alias, string pass);
+        Task<bool> CreateAccount(string alias, string email, string pass);
 
         Task<bool> SignIn(string alias, string pass);
 
         Task<bool> CreateProject(string name, bool isPublic);
 
-        Task<bool> CreatePost(string title, int projectid, string[] tags, string description, string data);
+        Task<bool> CreatePost(string title, int projectid, string[] tags, string description, string[] data);
 
         Task<User> ValidateUser(string alias, string pass);
 
@@ -36,5 +36,9 @@ namespace KHub.BL
         Task<IndexHomeViewModel> GetPostsFiltered(int pid, string search, bool favorites, bool myposts);
 
         Task<bool> AddPostToFavorites(int userid, int postid);
+
+        Task<bool> AddPostToProject(int postid, int projectid);
+
+
     }
 }

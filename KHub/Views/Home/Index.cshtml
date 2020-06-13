@@ -20,7 +20,7 @@
                 <span>Add a new project</span>
             </v-tooltip>*@
 
-        <v-btn v-if="@Identity.IsSignedIn.ToString().ToLower()">
+        <v-btn v-if="@Identity.IsSignedIn.ToString().ToLower()" href="@Url.Action("Index","Home", new { favorite = true })">
             <span>Favorites</span>
             <v-icon>mdi-heart</v-icon>
         </v-btn>
@@ -53,7 +53,7 @@
 
                     <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                            <v-card-text class="headline text-center h-100px truncate" v-on="on">
+                            <v-card-text class="headline text-center h-100px truncate blind-100-box" v-on="on">
                                 @item.Title
                             </v-card-text>
                         </template>
@@ -75,7 +75,7 @@
                         <v-col>
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on }">
-                                    <v-btn text tile outline block large color="pink" v-on="on" small @@click="CreateAddToFav(@item.PostID)">
+                                    <v-btn text tile outline block large color="pink" v-on="on" small @@click="_AddPostToFavorites(@item.PostID)">
                                         <v-icon small>favorite</v-icon>
                                     </v-btn>
                                 </template>
@@ -131,7 +131,9 @@
         let controller = {
             components: {
             },
-            data: {},
+            data: {
+                Projects : JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model.UserProjects))`)
+            },
             methods: {
                 CopyToClip: function (text) {
                     this.CopyToClipboard(text);
@@ -161,84 +163,10 @@
                         return;
                     }
                     this.$modal.show(
+                        VueApp.Components.AddToProjectModalComponent,
                         {
-                            template: `
-                            <div class="p-3">
-                                <h2>Add Current contribution to a Project</h2>
-                                <label class="font-weight-bold">Projects</label><br>
-                            <select v-model="selected" class="form-control" placeholder="Select a Project">
-                              <option v-for="option in options" v-bind:value="option.value">
-                                {{ option.text }}
-                              </option>
-                            </select>
-                            <div v-show="!!!validation['Project.Required']" class="text-danger">You must select a project first</div>
-                                <div class="text-right">
-                                    <v-btn class="btn-block" :loading="favoriteSubmit" :disabled="favoriteSubmit" color="primary" @@click="_CreateProject">Add</v-btn>
-                                </div>
-                            </div>
-                            `,
-                            //props: [],
-                            data: function () {
-                                return {
-                                    // create project
-                                    validation: {
-                                        "Project.Required": true
-                                    },
-                                    selected: '',
-                                    options: [],
-                                    favoriteSubmit : false
-                                };
-                            },
-                            mounted: function () {
-                                let options = JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model.UserProjects))`);
-                                let newOpt = options.map((x, i) => {
-                                    return {
-                                        text: x.Name,
-                                        value: x.ProjectID
-                                    };
-                                });
-                                this.options = [...this.options, ...newOpt];
-                            },
-                            methods: {
-                                _AddToFavorite: function (projectid) {
-
-                                    this.validation = {
-                                        "ProjectName.Required": this.selected > 0,
-                                    };
-
-                                    let valid = this.Validate(this.validation);
-
-                                    if (!valid) {
-                                        return;
-                                    }
-
-                                    this.favoriteSubmit = true;
-
-                                    this.AddPostToFavorites(projectid, this.selected)
-                                        .then(() => {
-                                            this.$emit('close');
-                                            this.$notify({
-                                                title: 'Success:',
-                                                text: "Created Project successfully",
-                                                type: 'success',
-                                            });
-                                            //setTimeout(() => {
-                                            //    location.reload();
-                                            //}, 1000);
-                                        }).catch((error) => {
-                                            this.$notify({
-                                                title: 'Error:',
-                                                text: error,
-                                                type: 'error',
-                                            });
-                                            this.favoriteSubmit = false;
-                                        });
-
-                                }
-                            }
-                        },
-                        {
-                            //text: 'This text is passed as a property'
+                            PostID: postid,
+                            Projects: this.Projects
                         },
                         {
                             height: 'auto',
@@ -254,7 +182,7 @@
                         this.$emit('close');
                         this.$notify({
                             title: 'Success:',
-                            text: "Created Post successfully",
+                            text: "Added post to favorites successfully",
                             type: 'success',
                         });
                         //setTimeout(() => {

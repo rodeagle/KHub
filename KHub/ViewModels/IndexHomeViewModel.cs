@@ -14,4 +14,16 @@ namespace KHub.ViewModels
         public IEnumerable<Project> UserProjects { get; set; }
 
     }
+
+    public class PostModel{
+
+        public Post Post;
+
+        public bool IsFavorite { get; set; }
+
+        public PostModel(Post post) {
+            Post = post;
+        }
+            
+    }
 }

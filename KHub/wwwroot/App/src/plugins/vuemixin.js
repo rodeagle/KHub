@@ -4,6 +4,13 @@ import axios from 'axios';
 export default function Init() {
     Vue.mixin({ 
         methods: {
+            IsValidEmail: function (email) {
+                let re = /\S+@@\S+\.\S+/;
+                re.test(email);
+            },
+            RedirectToUrl: function (url) {
+                window.location = url;
+            },
             Validate: function (validation) {
                 let valid = Object.keys(validation).every(function (key) {
                     return validation[key];
@@ -25,13 +32,34 @@ export default function Init() {
                 document.body.removeChild(dummy);
 
             },
+            AddPostToProject: function (postid, projectid) {
+
+                var model = {
+                    postid: postid,
+                    projectid: projectid
+                };
+
+                return new Promise((resolve, reject) => {
+                    console.log('add to project');
+                    axios.post('/Home/AddPostToProject', model)
+                        .then(function (response) {
+                            response.data.success && resolve();
+                            !response.data.success && reject(response.data.message);
+                        })
+                        .catch(function (error) {
+                            reject(error.message);
+                        });
+                });
+            },
             AddPostToFavorites: function (postid) {
+
+                var model = {
+                    postid: postid
+                };
+
                 return new Promise((resolve, reject) => {
                     console.log('add to favorites');
-                    axios.post('/Home/AddPostToFavorites',
-                        {
-                            postid : postid
-                        })
+                    axios.post('/Home/AddPostToFavorites', model)
                         .then(function (response) {
                             response.data.success && resolve();
                             !response.data.success && reject(response.data.message);
@@ -58,11 +86,12 @@ export default function Init() {
                         });
                 });
             },
-            CreateAccount: function (alias, password) {
+            CreateAccount: function (alias,email, password) {
                 return new Promise((resolve, reject) => {
                     axios.post('/Home/CreateAccount',
                         {
                             alias: alias,
+                            email : email,
                             password: password
                         })
                         .then(function (response) {
@@ -100,7 +129,7 @@ export default function Init() {
                     description: data.description,
                     //tags: data.tags,
                     projectid: data.selected,
-                    code: data.code
+                    codes: data.codes
                 };
                 return new Promise((resolve, reject) => {
                     axios.post('/Home/CreatePost', model)

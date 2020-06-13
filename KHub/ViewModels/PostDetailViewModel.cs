@@ -10,7 +10,10 @@ namespace KHub.ViewModels
 
         public string Title { get; set; }
         public string Description { get; set; }
-        public string Code { get; set; }
+        public List<string> Codes { get; set; }
         public string Author { get; set; }
+        public int PostID { get; set; }
+        public int ProjectID { get; set; }
+        public string ProjectName { get; set; }
     }
 }

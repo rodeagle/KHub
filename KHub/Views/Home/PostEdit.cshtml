@@ -1,0 +1,161 @@
+﻿@using Newtonsoft.Json;
+@model KHub.ViewModels.PostDetailViewModel
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<div class="index-container post-view">
+    <div class="p-3">
+        <h2>Edit Post</h2>
+        <label class="font-weight-bold">Title</label>
+        <small>Make it sound and clear</small><br>
+        <input class="form-control" v-model="title" />
+        <div v-show="!validation['Title.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+        <label class="font-weight-bold pt-3">Project</label>
+        <small>(it will inherit the projects visibility)</small>
+        <input class="form-control" readonly v-bind:value="selectedProject">
+        <div v-show="!validation['Project.Required']" class="text-danger">You must select a project first</div>
+        <label class="font-weight-bold pt-3">Description</label>
+        <small>Add instructions or a brief description (Accepts HTML)</small>
+        <vue-editor v-model="description" :editorToolbar="customToolbar"></vue-editor>
+        <!--<textarea rows="10" class="w-100 form-control" v-model="description"></textarea><br>-->
+        <div v-show="!validation['Description.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+        <div class="pt-3 pb-3">
+            <label class="font-weight-bold">Code</label>
+            <small>Code section to attach</small>
+            <v-btn color="primary" @@click="AddCodeSection" class="float-right"><v-icon>add</v-icon></v-btn>
+        </div>
+        <prism-editor class="pb-2" v-for="(code, index) in codes" v:key="codes[index]" :code="codes[index]" v-model="codes[index]" language="js" :line-numbers="true"></prism-editor>
+        <br>
+        <div class="row">
+            <div class="col-12 col-sm-12 col-lg-6">
+                <v-btn class="btn-block" color="secondary" @@click="_CloseModal">Cancel</v-btn>
+            </div>
+            <div class="col-12 col-sm-12 col-lg-6">
+                <v-btn class="btn-block" :loading="createProjectSubmitting" :disabled="createProjectSubmitting" color="primary" @@click="_CreatePost">Create</v-btn>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+
+
+    <script>
+        //start main app
+        let controller = {
+            components: {
+                'prism-editor': window.VueApp.Components.prismEditor,
+                'post-edit': window.VueApp.Components.CreatePostModalComponent,
+                'vue-tag-input': window.VueApp.Components.vuetag,
+                'vue-editor' : window.VueApp.Components.VueEditor
+            },
+            data: {
+                customToolbar: [
+                    [{ 'font': [] }],
+                    [{ 'header': [false, 1, 2, 3, 4, 5, 6, ] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{'align': ''}, {'align': 'center'}, {'align': 'right'}, {'align': 'justify'}],
+                    [{ 'header': 1 }, { 'header': 2 }],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link', 'formula'],
+                    [{ 'direction': 'rtl' }],
+                    ['clean'],
+                ],
+                validation: {
+                    "Title.Required": true,
+                    "Description.Required": true,
+                    "Project.Required": true
+                },
+                title: '@Html.Raw(Model.Title)',
+                tags: [],
+                createPostSubmitting: false,
+                selected: '@Model.ProjectID',
+                options: [
+                    { text: 'Uno', value: 'A' },
+                    { text: 'Dos', value: 'B' },
+                    { text: 'Tres', value: 'C' }
+                ],
+                codes: [],
+                description: `@Html.Raw(Model.Description)`,
+                selectedProject : "@Html.Raw(Model.ProjectName)"
+            },
+            methods: {
+                AddCodeSection: function () {
+                    this.codes.push('');
+                },
+                _CloseModal: function () {
+                    this.$emit('close');
+                },
+                _CreatePost: function () {
+
+                    this.createPostValidation = {
+                        "Title.Required": !!this.title && this.title.length > 4,
+                        "Description.Required": !!this.description && this.description.length > 4,
+                        "Project.Required": !!this.selected
+                    };
+
+                    let _validation = this.createPostValidation;
+                    let valid = Object.keys(_validation).every(function (key) {
+                        return _validation[key];
+                    });
+
+                    if (!valid) {
+                        return;
+                    }
+
+                    this.createPostSubmitting = true;
+
+                    this.CreatePost(this.$data)
+                        .then(() => {
+                            this.$emit('close');
+                            this.$notify({
+                                title: 'Success:',
+                                text: "Created Post successfully",
+                                type: 'success',
+                            });
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        }).catch((error) => {
+                            this.$notify({
+                                title: 'Error:',
+                                text: error,
+                                type: 'error',
+                            });
+                            this.createProjectSubmitting = false;
+                        });
+
+                }
+            },
+            mounted: function () {
+                @foreach (var code in Model.Codes) {
+                    <text>
+                    this.codes.push(`@Html.Raw(code)`);
+                    </text>
+                }
+                //let $this = this;
+                //this.GetUserProjects()
+                //    .then(function (response) {
+                //        var mapped = response.result.map(function (x) {
+                //            return { value: x.projectID, text: x.name }
+                //        });
+                //        $this.$data.options = [{ value: '', text: '-- Select a Project --' }, ...mapped];
+                //        $this.$data.selectedProject = $this.$data.options.filter(x => x.value == $this.$data.selected).text;
+                //    });
+            },
+            created: function () {
+
+            }
+        };
+        VueApp.Start(controller);
+    </script>
+
+}

@@ -5,22 +5,28 @@
     ViewBag.Title = "K hub";
 }
 
-<div class="index-container">
+<div class="index-container post-view">
 
     <div class="pt-3">
+        @if (Identity.IsSignedIn && Model.Author == Identity.User.Alias)
+        {
+            <v-btn color="success" class="float-right mr-2" href="@Url.Action("PostEdit","Home", new { postid = Model.PostID })"><v-icon>edit</v-icon></v-btn>
+            <v-btn color="error" class="float-right mr-2" href="@Url.Action("PostEdit","Home", new { postid = Model.PostID })"><v-icon>delete</v-icon></v-btn>
+        }
         <h2>@Model.Title</h2>
     </div>
     <hr />
     <p>
-        <h3>Description:</h3>
-        <div class="bordered" style="height:300px">
+        @*<h3>Description:</h3>*@
+        <div class="bordered post-description-container">
             @Html.Raw(@Model.Description)
         </div>
     </p>
     <h3>Code:</h3>
-    <prism-editor language="js" :code="code" :line-numbers="true"></prism-editor>
+
+    <prism-editor class="pb-2" v-for="(itemcode,index) in codes" language="js" :key="index" :code="itemcode" :line-numbers="true"></prism-editor>
     <hr />
-    <small>Author : </small>
+    <small>Author : <strong>@Model.Author</strong></small> 
 </div>
 
 
@@ -34,12 +40,16 @@
                 'prism-editor' : window.VueApp.Components.prismEditor
             },
             data: {
-                code : `@Html.Raw(Model.Code)`
+                codes: []
             },
             methods: {
             },
             mounted: function () {
-
+                @foreach (var code in Model.Codes) {
+                    <text>
+                    this.codes.push(`@Html.Raw(code)`);
+                    </text>
+                }
             },
             created: function () {
 

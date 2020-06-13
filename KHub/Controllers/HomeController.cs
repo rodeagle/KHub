@@ -13,29 +13,18 @@ using Microsoft.Extensions.FileProviders;
 
 namespace KHub.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUserBL _userBL;
-        private readonly IWebHostEnvironment _env;
-        private readonly IFileProvider dist;
         public HomeController(ILogger<HomeController> logger, IUserBL userbl, IWebHostEnvironment env, IFileProvider fileProvider)
+            : base(env, fileProvider)
         {
             _logger = logger;
             _userBL = userbl;
-            _env = env;
-            dist = fileProvider;
         }
 
-        public string GetBundle()
-        {
-
-            var files = dist.GetDirectoryContents("wwwroot//App//dist");
-            return "App//dist//" + files.First(x => x.Name.Contains("bundle")).Name;
-
-        }
-
-        public async Task<IActionResult> Index(int projectid = 0, bool favorite = false, bool myposts = false,  string search = "")
+        public async Task<IActionResult> Index(int projectid = 0, bool favorite = false, bool myposts = false, string search = "")
         {
             ViewData["Bundle"] = GetBundle();
             var posts = await _userBL.GetPostsFiltered(projectid, search, favorite, myposts);
@@ -46,6 +35,17 @@ namespace KHub.Controllers
         [HttpGet]
         [Route("~/post")]
         public async Task<IActionResult> Post([FromQuery]int postid) {
+
+            ViewData["Bundle"] = GetBundle();
+            var post = await _userBL.GetPostDetail(postid);
+            return View(post);
+
+        }
+
+        [HttpGet]
+        [Route("~/edit")]
+        public async Task<IActionResult> PostEdit([FromQuery]int postid)
+        {
 
             ViewData["Bundle"] = GetBundle();
             var post = await _userBL.GetPostDetail(postid);
@@ -67,6 +67,7 @@ namespace KHub.Controllers
 
         public class SignInModel {
             public string alias { get; set; }
+            public string email { get; set; }
             public string password { get; set; }
         }
 
@@ -88,7 +89,7 @@ namespace KHub.Controllers
         {
             try
             {
-                var res = await _userBL.CreateAccount(model.alias, model.password);
+                var res = await _userBL.CreateAccount(model.alias, model.email, model.password);
                 return Json(new { success = res });
             }
             catch (Exception ex)
@@ -124,7 +125,7 @@ namespace KHub.Controllers
             public int projectid { get; set; }
             public string[] tags { get; set; }
             public string description { get; set; }
-            public string code { get; set; }
+            public string[] codes { get; set; }
         }
 
         [HttpPost]
@@ -133,7 +134,7 @@ namespace KHub.Controllers
 
             try
             {
-                var result = await _userBL.CreatePost(model.title, model.projectid, model.tags, model.description, model.code);
+                var result = await _userBL.CreatePost(model.title, model.projectid, model.tags, model.description, model.codes);
                 return Json(new { success = true });
 
             }
@@ -174,13 +175,17 @@ namespace KHub.Controllers
             }
         }
 
+        public class AddPostToFavoritesModal{
+            public int postid { get; set; }
+        }
+
         [HttpPost]
-        public async Task<ActionResult> AddPostToFavorites ([FromBody] int postid)
+        public async Task<ActionResult> AddPostToFavorites ([FromBody] AddPostToFavoritesModal model)
         {
             try
             {
 
-                var result = await _userBL.AddPostToFavorites(Identity.User.UserID, postid);
+                var result = await _userBL.AddPostToFavorites(Identity.User.UserID, model.postid);
                 return Json(new { success = true, result });
 
             }
@@ -189,6 +194,32 @@ namespace KHub.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        public class AddPostToProjectModel
+        {
+            public int postid { get; set; }
+            public int projectid { get; set; }
+
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddPostToProject([FromBody] AddPostToProjectModel model)
+        {
+            try
+            {
+
+                var result = await _userBL.AddPostToProject(model.postid, model.projectid);
+                return Json(new { success = true, result });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

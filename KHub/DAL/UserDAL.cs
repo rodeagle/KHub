@@ -86,12 +86,15 @@ namespace KHub.DAL
     {
         public Project() {
             Members = new List<int>();
+            AddedPosts = new List<int>();
         }
         public int ProjectID { get; set; }
         public int UserID { get; set; }
         public string Name { get; set; }
         public bool Public { get; set; }
         public List<int> Members { get; set; }
+        public List<int> AddedPosts { get; set; }
+
     }
 
     public class Post
@@ -117,13 +120,14 @@ namespace KHub.DAL
     {
         public PostDetail() {
             Tags = new List<string>();
+            Codes = new List<string>();
         }
         public int ProjectID { get; set; }
         public int UserID { get; set; }
         public string Title { get; set; }
         public List<string> Tags { get; set; }
         public string Description { get; set; }
-        public string  Code { get; set; }
+        public List<string>  Codes { get; set; }
         public bool Private { get; set; }
     }
 
@@ -148,6 +152,7 @@ namespace KHub.DAL
         public int UserID { get; set; }
         public string Alias { get; set; }
         public string Hash { get; set; }
+        public string Email { get; set; }
 
         public List<int> Favorites { get; set; }
     }
