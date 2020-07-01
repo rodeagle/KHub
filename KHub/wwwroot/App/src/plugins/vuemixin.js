@@ -2,7 +2,13 @@
 import axios from 'axios';
 
 export default function Init() {
-    Vue.mixin({ 
+    Vue.mixin({
+        data: function () {
+            return {
+                g_baseUrl: '',
+                g_AntiForgeryKey : ''
+            }
+        },
         methods: {
             IsValidEmail: function (email) {
                 let re = /\S+@@\S+\.\S+/;
@@ -31,6 +37,28 @@ export default function Init() {
                 document.execCommand("copy");
                 document.body.removeChild(dummy);
 
+            },
+            UpdateProject: function (projectid, members, userEdited, icon, color) {
+
+                var model = {
+                    ProjectID: projectid,
+                    EditedUserIDs: members,
+                    UserEdited: userEdited,
+                    Icon: icon,
+                    Color : color
+                };
+
+                return new Promise((resolve, reject) => {
+                    console.log('updated project');
+                    axios.post('/Home/UpdateProject', model)
+                        .then(function (response) {
+                            response.data.success && resolve();
+                            !response.data.success && reject(response.data.message);
+                        })
+                        .catch(function (error) {
+                            reject(error.message);
+                        });
+                });
             },
             AddPostToProject: function (postid, projectid) {
 

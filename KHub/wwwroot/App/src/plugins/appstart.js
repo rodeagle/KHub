@@ -15,7 +15,7 @@ export default {
 
         console.log(Vue.version);
 
-        Vue.use(VModal, { dynamic: true, /*injectModalsContainer: true */ /*dynamicDefaults: { clickToClose: false }*/ });
+        Vue.use(VModal, { dialog: true, dynamic: true, /*injectModalsContainer: true */ /*dynamicDefaults: { clickToClose: false }*/ });
         Vue.use(Notifications);
         Vue.use(VueAxios, axios);
 

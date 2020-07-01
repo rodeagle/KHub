@@ -5,85 +5,118 @@
 @{
     ViewBag.Title = "Projects";
     var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.Host.Value, Url.Content("~"));
+    var UserID = Identity.IsSignedIn ? Identity.User.UserID : 0;
 }
 
-<div class="index-container">
-    <br />
-    <h2>Most Recent Projects </h2>
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3" v-for="pro in projects">
-            <v-card class="mx-auto">
-                <div class="text-center pt-12">
-                    <v-icon x-large>
-                        extension
-                    </v-icon>
-                </div>
-                <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                        <v-card-text class="headline text-center h-100px truncate blind-100-box" v-on="on">
-                            {{pro.Name}}
-                        </v-card-text>
-                    </template>
-                    <span>{{pro.Name}}</span>
-                </v-tooltip>
-                <v-card-actions class="p-0 border">
-                    <v-row justify="center"
-                           no-gutters absolute>
-                        <v-col>
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn text tile outline block large color="success" v-on="on" @@click="CopyToClip(('@baseUrl' + 'projects?projectid={{proPostID}}'))" small>
-                                        <v-icon small>share</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>Share : Copy to clipboard</span>
-                            </v-tooltip>
-                        </v-col>
+    <div class="index-container">
+        <v-bottom-navigation v-model="bottomNav">
 
-                        <v-col>
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn text tile outline block large color="red" v-on="on" small :href="`Home/Index?projectid=${pro.ProjectID}`">
-                                        <v-icon small>launch</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>Check project items</span>
-                            </v-tooltip>
-                        </v-col>
-                    </v-row>
-                </v-card-actions>
-            </v-card>
+            <v-btn @*v-on="on"*@ @@click="Recent()">
+                <span>Recent</span>
+                <v-icon>mdi-history</v-icon>
+            </v-btn>
+
+            @*<v-btn v-if="@Identity.IsSignedIn.ToString().ToLower()" @@click="RedirectToUrl('@Url.Action("Index","Home", new { favorite = true })')">
+                <span>Favorites</span>
+                <v-icon>mdi-heart</v-icon>
+            </v-btn>*@
+
+            <v-btn @@click="MemberOf()">
+                <span>Projects Im Member At</span>
+                <v-icon>mdi-map-marker</v-icon>
+            </v-btn>
+        </v-bottom-navigation>
+        <br />
+        <h2>{{Title}}</h2>
+        <hr />
+        <div v-if="projectsFiltered.length == 0" class="text-center">
+        <h4>There is nonthing to show at the moment</h4>
         </div>
-        @*<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3" v-for="pro in projects" v-if="false">
-            <div class="p-2 border-box">
-                <div class="text-center font-weight-bold pb-2">{{pro.Name}}</div>
-                <div class="text-center">
-                    <v-icon x-large>
-                        folder_shared
-                    </v-icon>
-                </div>
-                <div class="pt-3 pb-3 text-center">
-                    <v-tooltip bottom>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3" v-for="pro in projectsFiltered">
+                <v-card class="mx-auto">
+                    <div class="text-center pt-12">
+                        <v-icon x-large>
+                            extension
+                        </v-icon>
+                    </div>
+                    <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" @@click="CopyToClip(('@baseUrl' + 'projects?projectid={{proPostID}}'))" small>
-                                <v-icon small>share</v-icon>
-                            </v-btn>
+                            <v-card-text class="headline text-center h-100px truncate blind-100-box" v-on="on">
+                                {{pro.Name}}
+                            </v-card-text>
                         </template>
-                        <span>Share : Copy to clipboard</span>
+                        <span>{{pro.Name}}</span>
                     </v-tooltip>
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" small :href="`Home/Index?projectid=${pro.ProjectID}`">
-                                <v-icon small>launch</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Check project items</span>
-                    </v-tooltip>
-                </div>
+                    <v-card-actions class="p-0 border">
+                        <v-row justify="center"
+                               no-gutters absolute>
+
+                            <v-col>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn text tile outline block large color="blue" v-on="on" @@click="RedirectToUrl((`project?projectid=${pro.ProjectID}`))" small>
+                                            <v-icon small>edit</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Go To Project Details</span>
+                                </v-tooltip>
+                            </v-col>
+                            <v-col>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn text tile outline block large color="success" v-on="on" @@click="CopyToClip((`@(baseUrl)/projects?projectid=${pro.ProjectID}`))" small>
+                                            <v-icon small>share</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Share : Copy to clipboard</span>
+                                </v-tooltip>
+                            </v-col>
+
+                            <v-col>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn text tile outline block large color="red" v-on="on" small @@click="RedirectToUrl(`Home/Index?projectid=${pro.ProjectID}`)">
+                                            <v-icon small>launch</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Check project items</span>
+                                </v-tooltip>
+                            </v-col>
+                        </v-row>
+                    </v-card-actions>
+                </v-card>
             </div>
-        </div>*@
+            @*<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3" v-for="pro in projects" v-if="false">
+                <div class="p-2 border-box">
+                    <div class="text-center font-weight-bold pb-2">{{pro.Name}}</div>
+                    <div class="text-center">
+                        <v-icon x-large>
+                            folder_shared
+                        </v-icon>
+                    </div>
+                    <div class="pt-3 pb-3 text-center">
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn v-on="on" @@click="CopyToClip(('@baseUrl' + 'projects?projectid={{proPostID}}'))" small>
+                                    <v-icon small>share</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Share : Copy to clipboard</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn v-on="on" small :href="`Home/Index?projectid=${pro.ProjectID}`">
+                                    <v-icon small>launch</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Check project items</span>
+                        </v-tooltip>
+                    </div>
+                </div>
+            </div>*@
+        </div>
     </div>
-</div>
 
 
 @section scripts {
@@ -96,7 +129,9 @@
                 //'prism-editor' : window.VueApp.Components.prismEditor
             },
             data: {
-                projects: JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model))`)
+                projects: JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model))`),
+                projectsFiltered: JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model))`),
+                Title : 'Most Recent Projects'
             },
             methods: {
                 GenerateUrl: function () {
@@ -109,7 +144,17 @@
                         text: "Copy to clipboard succesfully",
                         type: 'success',
                     });
+                },
+                Recent: function () {
+                    this.projectsFiltered = this.projects;
+                    this.Title = 'Most Recent Projects';
+                },
+                MemberOf: function () {
+                    this.Title = 'You are Owner or Member Of this Projects';
+                    this.projectsFiltered = this.projects.filter(x => x.UserID == @UserID || x.Members.some(y => y.UserID == @UserID));
+                    console.log(this.projectsFiltered);
                 }
+
             },
             mounted: function () {
 

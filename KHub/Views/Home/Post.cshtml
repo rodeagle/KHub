@@ -2,7 +2,9 @@
 @model KHub.ViewModels.PostDetailViewModel
 
 @{
-    ViewBag.Title = "K hub";
+    ViewBag.Title = Model.Title;
+    var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.Host.Value, Url.Content("~"));
+
 }
 
 <div class="index-container post-view">
@@ -10,8 +12,8 @@
     <div class="pt-3">
         @if (Identity.IsSignedIn && Model.Author == Identity.User.Alias)
         {
-            <v-btn color="success" class="float-right mr-2" href="@Url.Action("PostEdit","Home", new { postid = Model.PostID })"><v-icon>edit</v-icon></v-btn>
-            <v-btn color="error" class="float-right mr-2" href="@Url.Action("PostEdit","Home", new { postid = Model.PostID })"><v-icon>delete</v-icon></v-btn>
+            <v-btn color="success" class="float-right mr-2" @@click="RedirectToUrl('@Url.Action("PostEdit","Home", new { postid = Model.PostID })')"><v-icon>edit</v-icon></v-btn>
+            <v-btn color="error" class="float-right mr-2" @@click="RedirectToUrl('@Url.Action("PostEdit","Home", new { postid = Model.PostID })')"><v-icon>delete</v-icon></v-btn>
         }
         <h2>@Model.Title</h2>
     </div>
@@ -22,11 +24,22 @@
             @Html.Raw(@Model.Description)
         </div>
     </p>
-    <h3>Code:</h3>
+    <h3 v-if="codes.length">Code:</h3>
 
     <prism-editor class="pb-2" v-for="(itemcode,index) in codes" language="js" :key="index" :code="itemcode" :line-numbers="true"></prism-editor>
     <hr />
-    <small>Author : <strong>@Model.Author</strong></small> 
+    <small>Author : <strong>@Model.Author</strong>
+        <span class="float-right">
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                    <v-btn text tile outline block large color="green" v-on="on" @@click="CopyToClip('@(baseUrl)/Home/post?postid=@Model.PostID')" small>
+                        <v-icon small>share</v-icon>
+                    </v-btn>
+                </template>
+                <span>Copy to clipboard</span>
+            </v-tooltip>
+        </span>
+    </small>
 </div>
 
 
@@ -43,6 +56,14 @@
                 codes: []
             },
             methods: {
+                CopyToClip: function (text) {
+                    this.CopyToClipboard(text);
+                    this.$notify({
+                        title: 'Success',
+                        text: "Copy to clipboard succesfully",
+                        type: 'success',
+                    });
+                },
             },
             mounted: function () {
                 @foreach (var code in Model.Codes) {

@@ -26,5 +26,10 @@ namespace KHub.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult ResetPasswordPost(string email) {
+            return null;
+        }
+
     }
 }

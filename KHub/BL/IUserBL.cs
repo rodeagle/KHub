@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using static KHub.Controllers.HomeController;
 
 namespace KHub.BL
 {
@@ -38,6 +39,10 @@ namespace KHub.BL
         Task<bool> AddPostToFavorites(int userid, int postid);
 
         Task<bool> AddPostToProject(int postid, int projectid);
+
+        Task<ProjectDetailViewModel> GetUserProject(int projectid);
+
+        Task<bool> UpdateProject(UpdateProjectViewModel model);
 
 
     }

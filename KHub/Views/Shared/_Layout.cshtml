@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
     <title>@ViewData["Title"] - KHub</title>
 
     @*Style sheets*@
@@ -28,11 +30,16 @@
 
         var bundleUrl = $"{baseUrl}//{ViewData["Bundle"]}";
 
-
     }
 
     @*create the script tags*@
     <script src="@bundleUrl"></script>
+
+    <meta property="og:url" content="@baseUrl" />
+    <meta property="og:title" content="@ViewData["Title"]" />
+    @*<meta property="og:image" content="URL of the image you'd like to use" />*@
+    <meta property="og:description" content="Go now to learn more in KnowHub to learn more." />
+    <meta property="og:type" content="website" />
 
 </head>
 <body>

@@ -64,6 +64,17 @@ namespace KHub.Controllers
 
         }
 
+        [HttpGet]
+        [Route("~/project")]
+        public async Task<IActionResult> ProjectDetail([FromQuery]int projectid)
+        {
+
+            ViewData["Bundle"] = GetBundle();
+            var model = await _userBL.GetUserProject(projectid);
+            return View(model);
+
+        }
+
 
         public class SignInModel {
             public string alias { get; set; }
@@ -175,12 +186,12 @@ namespace KHub.Controllers
             }
         }
 
-        public class AddPostToFavoritesModal{
+        public class AddPostToFavoritesModal {
             public int postid { get; set; }
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddPostToFavorites ([FromBody] AddPostToFavoritesModal model)
+        public async Task<ActionResult> AddPostToFavorites([FromBody] AddPostToFavoritesModal model)
         {
             try
             {
@@ -212,6 +223,29 @@ namespace KHub.Controllers
                 var result = await _userBL.AddPostToProject(model.postid, model.projectid);
                 return Json(new { success = true, result });
 
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        public class UpdateProjectViewModel{
+            public int ProjectID { get; set; }
+            public bool UsersEdited { get; set; }
+            public int[] MemberUserIDs { get; set; }
+            public string Color { get; set; }
+            public string Icon { get; set; }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProject(UpdateProjectViewModel model)
+        {
+            try
+            {
+                var result = await _userBL.UpdateProject(model);
+                return Json(new { success = true, result });
             }
             catch (Exception ex)
             {

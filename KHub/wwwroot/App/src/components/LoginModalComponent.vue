@@ -6,10 +6,10 @@
                 <h2>Login</h2>
                 <label class="font-weight-bold">Login Name</label><br>
                 <input name="LoginName" class="form-control" v-model="localAlias" /><br>
-                <div v-show="!!!validation['LoginName.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+                <div v-show="!validation['LoginName.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
                 <label class="font-weight-bold">Password</label><br>
-                <input name="Password" class="form-control" v-model="localPassword" /><br>
-                <div v-show="!!!validation['LoginName.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+                <input  type="password" name="Password" class="form-control" v-model="localPassword" /><br>
+                <div v-show="!validation['LoginName.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
                 <br />
                 <a :href="baseurl+'/reset-password'">Forgot your password? Click Here</a>
                 <br />
@@ -25,15 +25,15 @@
                 <!--login-->
                 <label class="font-weight-bold">Login Name</label><br>
                 <input name="LoginName" class="form-control" v-model="createAlias" /><br>
-                <div v-show="!!!createValidation['LoginName.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+                <div v-show="!createValidation['LoginName.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
                 <!--email-->
                 <label class="font-weight-bold">Email</label><br>
                 <input name="Email" type="email" class="form-control" v-model="email" /><br>
-                <div v-show="!!!createValidation['Email.Required']" class="text-danger">A valid email is required</div>
+                <div v-show="!createValidation['Email.Required']" class="text-danger">A valid email is required</div>
                 <!--password-->
                 <label class="font-weight-bold">Password</label><br>
-                <input name="Password" class="form-control" v-model="createPassword" /><br>
-                <div v-show="!!!createValidation['Password.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
+                <input type="password" name="Password" class="form-control" v-model="createPassword" /><br>
+                <div v-show="!createValidation['Password.Required']" class="text-danger">This field is required and with a min of 4 letters</div>
                 <!--submit--> 
                 <div class="text-right">
                     <v-btn class="btn-block" :loading="createAccountSubmitting" :disabled="createAccountSubmitting" color="primary" @click="_CreateAccount">Create Account</v-btn>

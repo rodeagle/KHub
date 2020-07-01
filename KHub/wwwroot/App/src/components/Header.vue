@@ -1,6 +1,7 @@
 ﻿<template>
     <header>
         <modals-container />
+        <v-dialog />
         <div>
             <v-app-bar dark
                        app
@@ -35,7 +36,7 @@
                 </v-btn>
                 <v-tooltip bottom v-if="issignedin">
                     <template v-slot:activator="{ on }">
-                        <v-btn icon  class="d-sm-block d-xs-block d-md-none">
+                        <v-btn icon class="d-sm-block d-xs-block d-md-none">
                             <v-icon v-on="on">account_circle</v-icon>
                         </v-btn>
                     </template>

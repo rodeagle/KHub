@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 using KHub.ViewModels;
+using static KHub.Controllers.HomeController;
 
 namespace KHub.BL
 {
@@ -137,7 +138,11 @@ namespace KHub.BL
                 Name = name,
                 ProjectID = ProjectID,
                 UserID = userid,
-                Public = isPublic
+                Public = isPublic,
+                Members = new int[] { Identity.User.UserID }.ToList(),
+                Icon = "edit",
+                Color = "808080"
+                
             });
             projects.TopID = ProjectID;
 
@@ -385,6 +390,58 @@ namespace KHub.BL
 
             await _userService.UpdateProjects(projects);
 
+            return true;
+        }
+
+        public async Task<ProjectDetailViewModel> GetUserProject(int projectid) {
+
+            var projects = await _userService.GetProjects();
+            var users = await _userService.GetUsers();
+
+            var project = projects.Projects.First(x => x.ProjectID == projectid);
+
+            var members = project.Members.Select(x => users.Users.FirstOrDefault(y => y.UserID == x));
+
+
+            return new ProjectDetailViewModel() { 
+                Project = project,
+                Members = members.Select(x=> new UserViewModel() { 
+                    Alias = x.Alias,
+                    Email = x.Email,
+                    UserID = x.UserID
+                }),
+                AllUsers = users.Users.Select(x => new UserViewModel()
+                {
+                    Alias = x.Alias,
+                    Email = x.Email,
+                    UserID = x.UserID
+                })
+            };
+
+        }
+
+        public async Task<bool> UpdateProject(UpdateProjectViewModel model) {
+
+            var projects = await _userService.GetProjects();
+
+            var updated = false;
+
+            if (model.UsersEdited) {
+                updated = true;
+                projects.Projects.First(x => x.ProjectID == model.ProjectID).Members = model.MemberUserIDs.ToList();
+            }
+            if (model.Icon != string.Empty) {
+                updated = true;
+                projects.Projects.First(x => x.ProjectID == model.ProjectID).Icon = model.Icon;
+            }
+            if (model.Color != string.Empty) {
+                updated = true;            
+                projects.Projects.First(x => x.ProjectID == model.ProjectID).Icon = model.Icon;
+            }
+
+            if (updated) {
+                await _userService.UpdateProjects(projects);
+            }
             return true;
         }
     }//

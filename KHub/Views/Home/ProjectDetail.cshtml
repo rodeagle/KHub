@@ -1,0 +1,184 @@
+﻿@using Newtonsoft.Json;
+@using Newtonsoft.Json.Converters;
+
+@model KHub.ViewModels.ProjectDetailViewModel
+
+@{
+    ViewBag.Title = Model.Project.Name;
+    var baseUrl = string.Format("{0}://{1}{2}", this.Context.Request.Scheme, this.Context.Request.Host.Value, Url.Content("~"));
+    var canEdit = Identity.IsSignedIn && (Model.Project.UserID == Identity.User.UserID || Model.Members.Any(x => x.UserID == Identity.User.UserID));
+}
+
+<div class="index-container">
+    <br />
+    <h2>@Model.Project.Name </h2>
+    <hr />
+    <v-container>
+        <v-row>
+            <v-col class=" border">
+                <strong>Members : </strong>
+                <ul>
+                    @foreach (var item in Model.Members)
+                    {
+                        <li>@(item.Alias)</li>
+                    }
+                </ul>
+            </v-col>
+            <v-row class="col-sm-12 col-md-9  border">
+                <v-col class="col-sm-12 col-md-8">
+                    Icon :
+                    <v-icon large color="color">@(Model.Project.Icon ?? "edit")</v-icon>
+                    <v-autocomplete v-model="selectedUsers"
+                                    :items="items"
+                                    dense
+                                    filled
+                                    chips
+                                    deletable-chips
+                                    multiple
+                                    item-text="Alias"
+                                    item-value="Alias"
+                                    label="Users"
+                                    disabled='!@(canEdit.ToString().ToLower())'
+                                    @@change="UsersEdited = true">
+                    </v-autocomplete>
+                </v-col>
+                <v-col class="col-sm-12 col-md-4">
+                    @*<input type="text" class="form-control" value="@(Model.Project.Color ?? "#808080")"/>*@
+                    <v-color-picker class="" mode="rgba" v-model="color"></v-color-picker>
+                </v-col>
+                <v-col class="col-12">
+                    <v-card-actions class="p-0 border">
+                        <v-row justify="center"
+                               no-gutters absolute>
+                            <v-col>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn text tile outline block large color="success" v-on="on" @@click="CopyToClip((`@(baseUrl)/project?projectid=@(Model.Project.ProjectID)`))" small>
+                                            <v-icon small>share</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Share : Copy to clipboard</span>
+                                </v-tooltip>
+                            </v-col>
+
+                            <v-col>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn text tile outline block large color="success" v-on="on" small>
+                                            <v-icon small>launch</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Go to contributions</span>
+                                </v-tooltip>
+                            </v-col>
+                            @if (Identity.IsSignedIn && Identity.User.UserID == Model.Project.UserID)
+                            {
+                                <v-col>
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn text tile outline block large color="red" v-on="on" small @@click="DeleteProject()">
+                                                <v-icon small>delete</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Delete the project</span>
+                                    </v-tooltip>
+                                </v-col>
+                                <v-col>
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn text tile outline block large color="blue" v-on="on" small @@click="UpdateProject()">
+                                                <v-icon small>save</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Save changes</span>
+                                    </v-tooltip>
+                                </v-col>
+
+                            }
+                        </v-row>
+                    </v-card-actions>
+                </v-col>
+            </v-row>
+        </v-row>
+    </v-container>
+</div>
+
+
+@section scripts {
+
+
+    <script>
+        //start main app
+        let controller = {
+            components: {
+            },
+            data: {
+                color: '#@(Model.Project.Color ?? "808080")',
+                items: JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model.AllUsers))`).filter(x=> x.UserID != @Model.Project.UserID),
+                selectedUsers: JSON.parse(`@Html.Raw(JsonConvert.SerializeObject(Model.Members))`).filter(x => x.UserID != @Model.Project.UserID),
+                UsersEdited:  false,
+            },
+            methods: {
+                DeleteProject: function () {
+
+                    this.$modal.show('dialog', {
+                        title: 'Warning!',
+                        text: 'Are you sure you want to delete this project?',
+                        buttons: [
+                            {
+                                title: 'Delete Project',       // Button title
+                                handler: () => { }, // Button click handler,
+                                color : 'danger'
+                            },
+                            {
+                                default: true,
+                                title: 'Close',
+                                color: 'primary',
+                                class: 'btn btn-primary'
+                            }
+                        ]
+                    });
+                },
+                UpdateProject: function () {
+                    let color = this.color != '@(Model.Project.Color)' ? this.color : '';
+                    @*let icon = this.icon != '@(Model.Project.Icon)' ? this.color : '';*@
+                    UpdateProject(@(Model.Project.ProjectID),selectedUsers, this.UsersEdited,color,'')
+                        .then(() => {
+                            this.$emit('close');
+                            this.$notify({
+                                title: 'Success:',
+                                text: "Updated the project succesfully",
+                                type: 'success',
+                            });
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        }).catch((error) => {
+                            this.$notify({
+                                title: 'Error:',
+                                text: error,
+                                type: 'error',
+                            });
+                            this.createProjectSubmitting = false;
+                        });
+                },
+                CopyToClip: function (text) {
+                    this.CopyToClipboard(text);
+                    this.$notify({
+                        title: 'Success',
+                        text: "Copy to clipboard succesfully",
+                        type: 'success',
+                    });
+                }
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            }
+        };
+        VueApp.Start(controller);
+    </script>
+
+}

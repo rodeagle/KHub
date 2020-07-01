@@ -94,6 +94,8 @@ namespace KHub.DAL
         public bool Public { get; set; }
         public List<int> Members { get; set; }
         public List<int> AddedPosts { get; set; }
+        public string Icon { get; set; }
+        public string Color { get; set; }
 
     }
 
@@ -104,6 +106,7 @@ namespace KHub.DAL
         public string Title { get; set; }
         public int PostID { get; set; }
         public string PostBinID { get; set; }
+
     }
 
     public class PostsBin
