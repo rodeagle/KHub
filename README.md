@@ -1,5 +1,7 @@
 #### KHub
 
+## Test Enviroment: knowhub.azurewebsites.net
+
 # Still WIP
 
 ## Project's goal:
